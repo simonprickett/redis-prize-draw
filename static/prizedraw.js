@@ -6,15 +6,26 @@ window.onload = function () {
       e.preventDefault();
 
       const githubId = document.getElementById('github-id').value;
-      const githubResponse = await fetch(`/profile/${githubId}`);
+      const enterResponse = await fetch(`/enter/${githubId}`);
       
-      if (githubResponse && githubResponse.status === 200) {
-        const githubProfile = await githubResponse.json();
-        console.log(githubProfile.login);
-        console.log(githubProfile.name);
-        console.log(githubProfile.avatar_url);
-      } else {
-        console.log('User does not exist!');
+      switch (enterResponse.status) {
+        case 200: 
+          // TODO display output...
+          const githubProfile = await enterResponse.json();
+          console.log(githubProfile.login);
+          console.log(githubProfile.name);
+          console.log(githubProfile.avatar_url);
+          break;
+        case 400:
+          // TODO display error case...
+          console.log('User has already entered the draw!');
+          break;
+        case 404:
+          // TODO display error case...
+          console.log('User does not exist!');
+          break;
+        default:
+          console.error(`Unexpected response code from /enter: ${enterResponse.status}`);
       }
     }
   }

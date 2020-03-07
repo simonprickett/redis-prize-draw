@@ -3,6 +3,8 @@ from flask import abort
 from flask import jsonify
 from flask import render_template
 from redis import Redis
+
+import json
 import requests
 
 REDIS_KEY_PREFIX = 'prizedraw'
@@ -21,17 +23,6 @@ def get_winners():
     # TODO
     return []
 
-@app.route('/profile/<github_id>')
-def get_github_profile(github_id):
-    # TODO cache successful profile lookups in Redis
-    # TODO look for previously cached profile lookups in Redis
-    response = requests.get('https://api.github.com/users/{}'.format(github_id))
-
-    if (response.status_code == 200):
-        return jsonify(response.json())
-    
-    abort(404)
-
 @app.route('/')
 def homepage():
     draw_open = redis.exists(get_key_name('is_open'))
@@ -44,3 +35,33 @@ def homepage():
         winners = get_winners()
 
     return render_template('homepage.html', draw_open = draw_open, prizes = prizes)
+
+@app.route('/enter/<github_id>')
+def get_github_profile(github_id):
+    # TODO make get_key_name variadic to stop exposing : separator here
+    profile = redis.get(get_key_name('profiles:{}'.format(github_id)))
+
+    if (not profile):
+        # Cache miss on the profile, get it from origin at GitHub.
+        response = requests.get('https://api.github.com/users/{}'.format(github_id))
+
+        if (response.status_code == 200):
+            profile = response.json()
+
+            # Cache this profile in Redis for an hour (3600 seconds).
+            redis.set(get_key_name('profiles:{}'.format(github_id)), json.dumps(profile), ex = 3600)
+        else:
+            # User doesn't exist in GitHub.
+            abort(404)
+
+    # Try entering this GitHub ID into the draw.
+    member_added = redis.sadd(get_key_name('entrants'), github_id)
+
+    if (member_added == 0):
+        # This GitHub ID has already entered the draw.
+        abort(400)
+
+    # Github ID was successfully entered, return the profile.
+    return jsonify(profile)
+    
+   
