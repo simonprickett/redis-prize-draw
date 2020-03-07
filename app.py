@@ -13,8 +13,8 @@ app = Flask(__name__)
 
 redis = Redis(host = 'localhost', port = 6379, password = None, decode_responses = True)
 
-def get_key_name(key):
-    return '{}:{}'.format(REDIS_KEY_PREFIX, key)
+def get_key_name(*args):
+    return '{}:{}'.format(REDIS_KEY_PREFIX, ':'.join(args))
 
 def get_prizes():
     return redis.smembers(get_key_name('prizes'))
@@ -38,8 +38,7 @@ def homepage():
 
 @app.route('/enter/<github_id>')
 def get_github_profile(github_id):
-    # TODO make get_key_name variadic to stop exposing : separator here
-    profile = redis.get(get_key_name('profiles:{}'.format(github_id)))
+    profile = redis.get(get_key_name('profiles', github_id))
 
     if (not profile):
         # Cache miss on the profile, get it from origin at GitHub.
@@ -49,7 +48,7 @@ def get_github_profile(github_id):
             profile = response.json()
 
             # Cache this profile in Redis for an hour (3600 seconds).
-            redis.set(get_key_name('profiles:{}'.format(github_id)), json.dumps(profile), ex = 3600)
+            redis.set(get_key_name('profiles', github_id), json.dumps(profile), ex = 3600)
         else:
             # User doesn't exist in GitHub.
             abort(404)
