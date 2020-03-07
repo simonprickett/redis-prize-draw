@@ -29,4 +29,12 @@ window.onload = function () {
       }
     }
   }
+
+  const reloadBtn = document.getElementById('reload-btn');
+
+  if (reloadBtn) {
+    reloadBtn.onclick = function() {
+      window.location.reload();
+    }
+  }
 };
