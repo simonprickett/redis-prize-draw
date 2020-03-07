@@ -38,6 +38,7 @@ def homepage():
 
 @app.route('/enter/<github_id>')
 def get_github_profile(github_id):
+    # Is this profile cached in Redis already?
     profile = redis.get(get_key_name('profiles', github_id))
 
     if (not profile):
