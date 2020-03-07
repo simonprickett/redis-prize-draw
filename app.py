@@ -63,5 +63,11 @@ def get_github_profile(github_id):
 
     # Github ID was successfully entered, return the profile.
     return jsonify(profile)
-    
+
+@app.route('/drawprizes') 
+def draw_prizes():
+    # This needs a get and a post, to cope with
+    # rendering a login form and authenticating then
+    # running the prize draw...
+    return 'TODO'
    
