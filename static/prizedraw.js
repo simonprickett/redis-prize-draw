@@ -18,16 +18,19 @@ window.onload = function () {
           const githubProfile = await enterResponse.json();
           enterResultText.innerHTML = `Thanks ${githubProfile.name ? githubProfile.name : githubId}, you're in the draw.  Check back soon to see if you're a winner!`;
           enterResult.classList.add('is-success');
+          enterResult.classList.remove('is-danger');
           enterDrawForm.classList.add('is-hidden');
           break;
         case 400:
           enterResultText.innerHTML = 'Thanks, but you\'re already entered for this draw.  Check back soon to see if you\'re a winner!';
           enterResult.classList.add('is-success');
+          enterResult.classList.remove('is-danger');
           enterDrawForm.classList.add('is-hidden');
           break;
         case 404:
           enterResultText.innerHTML = `We couldn't find a GitHub user with ID: "${githubId}".  Check your spelling or try another ID?`;
           enterResult.classList.add('is-danger');
+          enterResult.classList.remove('is-success');
           githubIdField.value = '';
           break;
         default:

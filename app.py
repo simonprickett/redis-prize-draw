@@ -16,12 +16,35 @@ redis = Redis(host = 'localhost', port = 6379, password = None, decode_responses
 def get_key_name(*args):
     return '{}:{}'.format(REDIS_KEY_PREFIX, ':'.join(args))
 
+def get_github_profile(github_id):
+    profile = redis.get(get_key_name('profiles', github_id))
+
+    if (not profile):
+        # Cache miss on the profile, get it from origin at GitHub.
+        response = requests.get('https://api.github.com/users/{}'.format(github_id))
+
+        if (response.status_code == 200):
+            profile = response.json()
+
+            # Cache this profile in Redis for an hour (3600 seconds).
+            redis.set(get_key_name('profiles', github_id), json.dumps(profile), ex = 3600)
+
+    return profile
+
 def get_prizes():
     return redis.smembers(get_key_name('prizes'))
 
 def get_winners(): 
-    # TODO
-    return []
+    winners = redis.hgetall(get_key_name('winners'))
+
+    for prize in winners:
+        # TODO get the profile for the winner from our cache...
+        # TODO call a function
+        print('{} -> {}'.format(prize, winners[prize]))
+
+    # TODO check and cache winners...
+
+    return winners
 
 @app.route('/')
 def homepage():
@@ -34,25 +57,15 @@ def homepage():
     else: 
         winners = get_winners()
 
-    return render_template('homepage.html', draw_open = draw_open, prizes = prizes)
+    return render_template('homepage.html', draw_open = draw_open, prizes = prizes, winners = winners)
 
 @app.route('/enter/<github_id>')
-def get_github_profile(github_id):
-    # Is this profile cached in Redis already?
-    profile = redis.get(get_key_name('profiles', github_id))
+def enter_prize_draw(github_id):
+    profile = get_github_profile(github_id)
 
     if (not profile):
-        # Cache miss on the profile, get it from origin at GitHub.
-        response = requests.get('https://api.github.com/users/{}'.format(github_id))
-
-        if (response.status_code == 200):
-            profile = response.json()
-
-            # Cache this profile in Redis for an hour (3600 seconds).
-            redis.set(get_key_name('profiles', github_id), json.dumps(profile), ex = 3600)
-        else:
-            # User doesn't exist in GitHub.
-            abort(404)
+        # User doesn't exist in GitHub.
+        abort(404)
 
     # Try entering this GitHub ID into the draw.
     member_added = redis.sadd(get_key_name('entrants'), github_id)
@@ -69,5 +82,5 @@ def draw_prizes():
     # This needs a get and a post, to cope with
     # rendering a login form and authenticating then
     # running the prize draw...
-    return 'TODO'
+    return render_template('adminlogin.html')
    

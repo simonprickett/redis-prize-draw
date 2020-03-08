@@ -57,7 +57,20 @@
         {% else %}
         <h1 class="title">Winners</h1>
         {% if winners %}
-        <p>Winners....</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th><abbr title="Prize">Prize</abbr></th>
+              <th><abbr title="Prize">Winner</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Some Prize</td>
+              <td>Some Person</td>
+            </tr>
+          </tbody>
+        </table>
         {% else %}
         <p>The draw has closed and we are waiting for our winners to be announced!</p>
         <div class="level"></div>
