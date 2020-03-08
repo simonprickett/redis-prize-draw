@@ -5,28 +5,39 @@ window.onload = function () {
     submitBtn.onsubmit = async function (e) {
       e.preventDefault();
 
-      const githubId = document.getElementById('github-id').value;
+      const githubIdField = document.getElementById('github-id');
+      const githubId = githubIdField.value;
       const enterResponse = await fetch(`/enter/${githubId}`);
+
+      const enterResult = document.getElementById('enter-result');
+      const enterResultText = document.getElementById('enter-result-text');
+      const enterDrawForm = document.getElementById('enter-draw');
       
       switch (enterResponse.status) {
         case 200: 
-          // TODO display output...
           const githubProfile = await enterResponse.json();
-          console.log(githubProfile.login);
-          console.log(githubProfile.name);
-          console.log(githubProfile.avatar_url);
+          enterResultText.innerHTML = `Thanks ${githubProfile.name ? githubProfile.name : githubId}, you're in the draw.  Check back soon to see if you're a winner!`;
+          enterResult.classList.add('is-success');
+          enterDrawForm.classList.add('is-hidden');
           break;
         case 400:
-          // TODO display error case...
-          console.log('User has already entered the draw!');
+          enterResultText.innerHTML = 'Thanks, but you\'re already entered for this draw.  Check back soon to see if you\'re a winner!';
+          enterResult.classList.add('is-success');
+          enterDrawForm.classList.add('is-hidden');
           break;
         case 404:
-          // TODO display error case...
-          console.log('User does not exist!');
+          enterResultText.innerHTML = `We couldn't find a GitHub user with ID: "${githubId}".  Check your spelling or try another ID?`;
+          enterResult.classList.add('is-danger');
+          githubIdField.value = '';
           break;
         default:
-          console.error(`Unexpected response code from /enter: ${enterResponse.status}`);
+          enterResultText.innerHTML = 'Sorry, something went wrong.  Please try again later.';
+          enterResult.classList.add('is-danger');
+          githubIdField.value = '';
       }
+
+      // Show result.
+      enterResult.classList.remove('is-hidden');
     }
   }
 
