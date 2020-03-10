@@ -67,7 +67,12 @@
           <tbody>
             {% for winner in winners %}
             <tr>
-              <td>{{ winner.name }}</td>
+              <td>
+                <figure class="image is-128x128">
+                  <img src="{{ winner.image }}">
+                </figure>
+                {{ winner.name }}
+              </td>
               <td>{{ winner.prize }}</td>
             </tr>
             {% endfor %}
