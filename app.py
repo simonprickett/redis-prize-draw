@@ -39,6 +39,14 @@ def get_prizes():
     return redis.smembers(get_key_name('prizes'))
 
 def get_winners(): 
+    # Check for cached winners JSON
+    winners_json = redis.get(get_key_name('winners_json'))
+
+    if (winners_json):
+        # Cache hit!
+        return json.loads(winners_json)
+
+    # Cache miss :(
     winners = redis.hgetall(get_key_name('winners'))
     winner_list = []
 
@@ -57,7 +65,8 @@ def get_winners():
         winner['image'] = winner_profile['avatar_url']
         winner_list.append(winner)
 
-    # TODO check and cache winners...
+    # Cache response to save doing this work ove and over.
+    redis.set(get_key_name('winners_json'), json.dumps(winner_list))
 
     return winner_list
 
