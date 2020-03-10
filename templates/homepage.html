@@ -60,15 +60,17 @@
         <table class="table">
           <thead>
             <tr>
-              <th><abbr title="Prize">Prize</abbr></th>
               <th><abbr title="Prize">Winner</abbr></th>
+              <th><abbr title="Prize">Prize</abbr></th>
             </tr>
           </thead>
           <tbody>
+            {% for winner in winners %}
             <tr>
-              <td>Some Prize</td>
-              <td>Some Person</td>
+              <td>{{ winner.name }}</td>
+              <td>{{ winner.prize }}</td>
             </tr>
+            {% endfor %}
           </tbody>
         </table>
         {% else %}

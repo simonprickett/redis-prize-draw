@@ -40,19 +40,26 @@ def get_prizes():
 
 def get_winners(): 
     winners = redis.hgetall(get_key_name('winners'))
+    winner_list = []
 
     for prize in winners:
-        winner = winners[prize]
-        winner_profile = get_github_profile(winner)
-        # TODO get the profile for the winner from our cache...
-        # TODO call a function
-        print('{} -> {}'.format(prize, winners[prize]))
-        # TODO have get_github_profile return JSON so we can use it here...
-        print(winner_profile['name'])
+        winner_id = winners[prize]
+        winner_profile = get_github_profile(winner_id)
+        
+        if (winner_profile['name']):
+            winner_name = winner_profile['name']
+        else:
+            winner_name = winner_profile['login']
+
+        winner = {}
+        winner['name'] = winner_name
+        winner['prize'] = prize
+        winner['image'] = winner_profile['avatar_url']
+        winner_list.append(winner)
 
     # TODO check and cache winners...
 
-    return winners
+    return winner_list
 
 @app.route('/')
 def homepage():
