@@ -5,13 +5,15 @@ from flask import render_template
 from redis import Redis
 
 import json
+import os
 import requests
 
 REDIS_KEY_PREFIX = 'prizedraw'
 
 app = Flask(__name__)
 
-redis = Redis(host = 'localhost', port = 6379, password = None, decode_responses = True)
+# TODO Need to get Redis host, port and password from the environment...
+redis = Redis(host = os.environ.get('REDIS_HOST', 'localhost'), port = os.environ.get('REDIS_PORT', 6379), password = os.environ.get('REDIS_PASSWORD', None), decode_responses = True)
 
 def get_key_name(*args):
     return '{}:{}'.format(REDIS_KEY_PREFIX, ':'.join(args))
