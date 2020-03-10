@@ -68,10 +68,10 @@
             {% for winner in winners %}
             <tr>
               <td>
+                <span class="has-text-weight-bold">{{ winner.name }}</span>
                 <figure class="image is-128x128">
                   <img src="{{ winner.image }}">
                 </figure>
-                {{ winner.name }}
               </td>
               <td>{{ winner.prize }}</td>
             </tr>
