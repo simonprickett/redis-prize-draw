@@ -1,12 +1,22 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-
-</head>
-
-<body>
-  <h1>TODO LOGIN FORM</h1>
-</body>
-
-</html>
+{% block content %}
+<section class="section">
+  <form id="adminlogin">
+    <div class="field">
+      <label class="label">Password</label>
+      <div class="control has-icons-left">
+        <input id="github-id" class="input" type="password" placeholder="" value="" autofocus>
+        <span class="icon is-small is-left">
+          <i class="fas fa-unlock"></i>
+        </span>
+      </div>
+    </div>
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-link" type="submit">Login</button>
+      </div>
+    </div>
+  </form>
+</section>
+{% endblock %}

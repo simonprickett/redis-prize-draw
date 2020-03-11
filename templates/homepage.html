@@ -1,95 +1,62 @@
-<!DOCTYPE html>
-<html>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prize Draw</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
-  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-</head>
+{% extends "base.html" %}
 
-<body>
-  <div class="container">
-    <section class="hero is-primary is-bold">
-      <div class="hero-body">
-        <div class="container">
-          <h1 class="title">
-            Prize Draw
-          </h1>
-        </div>
-      </div>
-    </section>
-    <div class="box">
-      <section class="section">
-        {% if draw_open == 1 and prizes %}
-        <h1 class="title">Prizes</h1>
-        <div class="content">
-          <p>You could be the lucky winner of one of these prizes:</p>
-          <ul>
-            {% for prize in prizes %}
-            <li>{{ prize }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        <h1 class="title">Enter the Draw</h1>
-        <p>To have a chance at winning a prize, simply provide your GitHub ID.</p>
-        <div class="level"></div>
-        <div id="enter-result" class="notification is-hidden">
-          <div id="enter-result-text"></div>
-        </div>
-        <form id="enter-draw">
-          <div class="field">
-            <label class="label">GitHub ID</label>
-            <div class="control has-icons-left">
-              <input id="github-id" class="input" type="text" placeholder="octocat" value="" autofocus>
-              <span class="icon is-small is-left">
-                <i class="fab fa-github"></i>
-              </span>
-            </div>
-          </div>
-          <div class="field is-grouped">
-            <div class="control">
-              <button class="button is-link" type="submit">Submit</button>
-            </div>
-          </div>
-        </form>
-        {% else %}
-        <h1 class="title">Winners</h1>
-        {% if winners %}
-          {% for row in winners | batch(4) %}
-          <div class="columns">
-            {% for winner in row %}
-            <div class="column is-3">
-              <article class="box">
-                <figure class="image">
-                  <img src="{{ winner.image }}">
-                </figure>   
-                <p class="has-text-weight-bold">{{winner.name}}: {{ winner.prize }}</p>
-              </article>
-            </div>
-            {% endfor %}
-          </div>
-          {% endfor %}
-        {% else %}
-        <p>The draw has closed and we are waiting for our winners to be announced!</p>
-        <div class="level"></div>
-        <button class="button is-link" id="reload-btn">Reload</button>
-        {% endif %}
-        {% endif %}
-      </section>
-    </div>
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <p>
-          <strong>Redis Prize Draw</strong> by <a href="https://simonprickett.dev/">Simon Prickett</a>.  An example 
-          application using <a href="https://redis.io/">Redis</a>, <a href="https://flask.palletsprojects.com/">Flask</a> and <a href="https://bulma.io/">Bulma</a>.
-        </p>
-        <p><a href="https://github.com/simonprickett/redis-prize-draw">Source code is available on GitHub</a>.</p>
-      </div>
-    </footer>
+{% block content%}
+<section class="section">
+  {% if draw_open == 1 and prizes %}
+  <h1 class="title">Prizes</h1>
+  <div class="content">
+    <p>You could be the lucky winner of one of these prizes:</p>
+    <ul>
+      {% for prize in prizes %}
+      <li>{{ prize }}</li>
+      {% endfor %}
+    </ul>
   </div>
-  <script type="text/javascript" src="{{ url_for('static', filename = 'prizedraw.js') }}"></script>
-</body>
-
-</html>
+  <h1 class="title">Enter the Draw</h1>
+  <p>To have a chance at winning a prize, simply provide your GitHub ID.</p>
+  <div class="level"></div>
+  <div id="enter-result" class="notification is-hidden">
+    <div id="enter-result-text"></div>
+  </div>
+  <form id="enter-draw">
+    <div class="field">
+      <label class="label">GitHub ID</label>
+      <div class="control has-icons-left">
+        <input id="github-id" class="input" type="text" placeholder="octocat" value="" autofocus>
+        <span class="icon is-small is-left">
+          <i class="fab fa-github"></i>
+        </span>
+      </div>
+    </div>
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-link" type="submit">Submit</button>
+      </div>
+    </div>
+  </form>
+  {% else %}
+  <h1 class="title">Winners</h1>
+  {% if winners %}
+    {% for row in winners | batch(4) %}
+    <div class="columns">
+      {% for winner in row %}
+      <div class="column is-3">
+        <article class="box">
+          <figure class="image">
+            <img src="{{ winner.image }}">
+          </figure>   
+          <p class="has-text-weight-bold">{{winner.name}}: {{ winner.prize }}</p>
+        </article>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  {% else %}
+  <p>The draw has closed and we are waiting for our winners to be announced!</p>
+  <div class="level"></div>
+  <button class="button is-link" id="reload-btn">Reload</button>
+  {% endif %}
+  {% endif %}
+</section>
+{% endblock %}

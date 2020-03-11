@@ -2,6 +2,7 @@ from flask import Flask
 from flask import abort
 from flask import jsonify
 from flask import render_template
+from flask import request
 from redis import Redis
 
 import json
@@ -159,10 +160,11 @@ def draw_prizes():
 
     return 'Done!'
 
-@app.route('/admin') 
+@app.route('/admin', methods=['GET', 'POST']) 
 def admin_page():
-    # This needs a get and a post, to cope with
-    # rendering a login form and authenticating then
-    # running the prize draw...
-    return render_template('adminlogin.html')
+    if (request.method == 'GET'):
+        return render_template('adminlogin.html')
+
+    return "TODO CHECK PASSWORD"
+    # POST request, check the password...
    
