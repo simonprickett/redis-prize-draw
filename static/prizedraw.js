@@ -1,8 +1,8 @@
 window.onload = function () {
-  const submitBtn = document.getElementById('enter-draw');
+  const submitForm = document.getElementById('enter-draw');
 
-  if (submitBtn) {
-    submitBtn.onsubmit = async function (e) {
+  if (submitForm) {
+    submitForm.onsubmit = async function (e) {
       e.preventDefault();
 
       const githubIdField = document.getElementById('github-id');
@@ -52,10 +52,11 @@ window.onload = function () {
     }
   }
 
-  const loginBtn = document.getElementById('admin-login');
+  const loginForm = document.getElementById('admin-login');
 
-  if (loginBtn) {
-    loginBtn.onclick = function() {
+  if (loginForm) {
+    loginForm.onsubmit = async function(e) {
+      e.preventDefault();
       alert('TODO LOGIN');
     }
   }

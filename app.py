@@ -3,15 +3,20 @@ from flask import abort
 from flask import jsonify
 from flask import render_template
 from flask import request
+from flask import session
+
 from redis import Redis
 
 import json
 import os
 import requests
+import secrets
 
 REDIS_KEY_PREFIX = 'prizedraw'
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = secrets.token_urlsafe(16)
 
 # TODO Need to get Redis host, port and password from the environment...
 redis = Redis(host = os.environ.get('REDIS_HOST', 'localhost'), port = os.environ.get('REDIS_PORT', 6379), password = os.environ.get('REDIS_PASSWORD', None), decode_responses = True)
