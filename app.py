@@ -88,14 +88,16 @@ def homepage():
 
 @app.route('/enter/<github_id>')
 def enter_prize_draw(github_id):
-    profile = get_github_profile(github_id)
+    lowercase_id = github_id.lower()
+
+    profile = get_github_profile(lowercase_id)
 
     if (not profile):
         # User doesn't exist in GitHub.
         abort(404)
 
     # Try entering this GitHub ID into the draw.
-    member_added = redis.sadd(get_key_name('entrants'), github_id)
+    member_added = redis.sadd(get_key_name('entrants'), lowercase_id)
 
     if (member_added == 0):
         # This GitHub ID has already entered the draw.
