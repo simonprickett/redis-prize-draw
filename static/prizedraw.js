@@ -51,4 +51,12 @@ window.onload = function () {
       window.location.reload();
     }
   }
+
+  const loginBtn = document.getElementById('admin-login');
+
+  if (loginBtn) {
+    loginBtn.onclick = function() {
+      alert('TODO LOGIN');
+    }
+  }
 };
