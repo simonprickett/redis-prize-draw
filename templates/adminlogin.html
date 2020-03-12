@@ -2,6 +2,11 @@
 
 {% block content %}
 <section class="section">
+  {% if error %}
+  <div class="notification is-danger">
+    {{ error }}
+  </div>
+  {% endif %}
   <form id="admin-login" autocomplete="off" action="/admin" method="POST">
     <div class="field">
       <label class="label">Password</label>

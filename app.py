@@ -173,5 +173,5 @@ def admin_page():
     if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
         return "YOU ARE IN!"
     else:
-        return "BAD PASSWORD"
+        return render_template('adminlogin.html', error='Bad password.')
    
