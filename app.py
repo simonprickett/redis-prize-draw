@@ -171,7 +171,11 @@ def admin_page():
         return render_template('adminlogin.html')
 
     if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
-        return render_template('admin.html')
+        draw_open = redis.exists(get_key_name('is_open'))
+        winners_exist = redis.exists(get_key_name('winners'))
+        print(draw_open)
+        print(winners_exist)
+        return render_template('admin.html', draw_open = draw_open, winners_exist = winners_exist)
     else:
         return render_template('adminlogin.html', error='Bad password.')
    

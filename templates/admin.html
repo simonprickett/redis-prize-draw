@@ -3,8 +3,15 @@
 {% block content %}
 <section class="section">
     <h1>TODO ADMIN PAGE!!!</h1>
+    {% if draw_open is sameas 1 %}
     <p>State for draw is open... (end draw and draw it buttons)</p>
-    <p>State for draw has closed and needs drawing... (draw it button)</p>
+    {% endif %}
+    {% if winners_exist is sameas 0 %}
+    <!-- there are no winners yet... -->
+    <p>State for draw needs drawing (and closing if you draw it when open)... (draw it button)</p>
+    {% endif %}
+    {% if draw_open is sameas 0 and winners_exist is sameas 1 %}
     <p>State for needing to set up a new draw</p>
+    {% endif %}
 </section>
 {% endblock %}
