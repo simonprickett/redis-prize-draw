@@ -51,13 +51,4 @@ window.onload = function () {
       window.location.reload();
     }
   }
-
-  const loginForm = document.getElementById('admin-login');
-
-  if (loginForm) {
-    loginForm.onsubmit = async function(e) {
-      e.preventDefault();
-      alert('TODO LOGIN');
-    }
-  }
 };

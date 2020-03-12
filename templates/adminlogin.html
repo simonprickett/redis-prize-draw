@@ -2,11 +2,11 @@
 
 {% block content %}
 <section class="section">
-  <form id="admin-login" autocomplete="off">
+  <form id="admin-login" autocomplete="off" action="/admin" method="POST">
     <div class="field">
       <label class="label">Password</label>
       <div class="control has-icons-left">
-        <input id="github-id" class="input" type="password" placeholder="" value="" autofocus>
+        <input name="password" class="input" type="password" placeholder="" value="" autofocus>
         <span class="icon is-small is-left">
           <i class="fas fa-unlock"></i>
         </span>
