@@ -132,7 +132,7 @@ def start_new_draw(prizes, duration):
 # TODO /enddraw POST route...
 @app.route('/enddraw', methods=['POST'])
 def end_draw():
-
+    return 'TODO'
 
 @app.route('/drawprizes', methods=['POST'])
 def draw_prizes():
