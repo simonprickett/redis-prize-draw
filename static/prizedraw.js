@@ -51,4 +51,20 @@ window.onload = function () {
       window.location.reload();
     }
   }
+
+  const endDrawBtn = document.getElementById('end-draw-btn');
+
+  if (endDrawBtn) {
+    endDrawBtn.onclick = function() {
+      alert('End draw!');
+    }
+  }
+
+  const pickWinnersBtn = document.getElementById('pick-winners-btn');
+
+  if (pickWinnersBtn) {
+    pickWinnersBtn.onclick = function() {
+      alert('Pick winners!');
+    }
+  }
 };
