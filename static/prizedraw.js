@@ -57,6 +57,11 @@ window.onload = function () {
   if (endDrawBtn) {
     endDrawBtn.onclick = function() {
       alert('End draw!');
+      // TODO POST TO the POST /enddraw endpoint 
+      // and check the result code, then remove the button and add
+      // some sort of response text...
+
+      // potentially update the messaging around the pick winners button too.
     }
   }
 
@@ -65,6 +70,9 @@ window.onload = function () {
   if (pickWinnersBtn) {
     pickWinnersBtn.onclick = function() {
       alert('Pick winners!');
+      // TODO POST TO the POST /drawprizes endpoint 
+      // and check the result code, then remove the button and add
+      // some sort of response text...
     }
   }
 };

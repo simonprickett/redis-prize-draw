@@ -129,9 +129,15 @@ def start_new_draw(prizes, duration):
     # TODO SUBMIT THE PIPELINE
     return 'TODO'
 
-@app.route('/drawprizes')
+# TODO /enddraw POST route...
+@app.route('/enddraw', methods=['POST'])
+def end_draw():
+
+
+@app.route('/drawprizes', methods=['POST'])
 def draw_prizes():
-    # TODO CHECK FOR VALID ADMIN SESSION!
+    if (not session['authenticated']):
+        return 'Not authorized.', 403
 
     # Close the prize draw if it is still open.
     redis.unlink(get_key_name('is_open'))
@@ -163,18 +169,20 @@ def draw_prizes():
     # Delete any remaining (non-winning) entrants.
     redis.unlink(get_key_name('entrants'))
 
-    return 'Done!'
+    return 'OK'
 
 @app.route('/admin', methods=['GET', 'POST']) 
 def admin_page():
+    session.clear()
+
     if (request.method == 'GET'):
         return render_template('adminlogin.html')
 
     if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
+        session['authenticated'] = True
+
         draw_open = redis.exists(get_key_name('is_open'))
         winners_exist = redis.exists(get_key_name('winners'))
-        print(draw_open)
-        print(winners_exist)
         return render_template('admin.html', draw_open = draw_open, winners_exist = winners_exist)
     else:
         return render_template('adminlogin.html', error='Bad password.')

@@ -2,16 +2,32 @@
 
 {% block content %}
 <section class="section">
-    <h1>TODO ADMIN PAGE!!!</h1>
-    {% if draw_open is sameas 1 %}
-    <p>State for draw is open... (end draw and draw it buttons)</p>
-    {% endif %}
-    {% if winners_exist is sameas 0 %}
-    <!-- there are no winners yet... -->
-    <p>State for draw needs drawing (and closing if you draw it when open)... (draw it button)</p>
-    {% endif %}
-    {% if draw_open is sameas 0 and winners_exist is sameas 1 %}
-    <p>State for needing to set up a new draw</p>
-    {% endif %}
+  <h1 class="title">Prize Draw Admin</h1>
+  {% if draw_open is sameas 1 %}
+  <div class="box">
+    <article>
+      <p class="subtitle">The prize draw is currently open.</p>
+      <button id="end-draw-btn" class="button is-danger">End Prize Draw</button>    
+    </article>
+  </div>
+  {% endif %}
+  {% if winners_exist is sameas 0 %}
+  <div class="box">
+    <article>
+      {% if draw_open is sameas 1 %}
+      <p class="subtitle">The prize draw is currently open - picking winners will also close the draw.</p>
+      <button id="pick-winners-btn" class="button is-danger">Pick Winners</button>    
+      {% else %}
+      <p class="subtitle">The prize draw has closed, it's time to pick the winners.</p>
+      <button id="pick-winners-btn" class="button is-primary">Pick Winners</button>    
+      {% endif %}
+    </article>
+  </div>
+  {% endif %}
+  {% if draw_open is sameas 0 %}
+  <!-- TODO deal with state where a previous draw's winners exist! -->
+  <p>State for needing to set up a new draw</p>
+  <p>Need some sort of form type control for adding prizes.</p>
+  {% endif %}
 </section>
 {% endblock %}
