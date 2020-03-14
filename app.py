@@ -185,6 +185,7 @@ def admin_page():
 
         # TODO pipeline these...
         draw_open = redis.exists(get_key_name('is_open'))
+        # TODO TTL on is_open...
         winners_exist = redis.exists(get_key_name('winners'))
         prizes_exist = redis.exists(get_key_name('prizes'))
         num_entrants = redis.scard(get_key_name('entrants'))

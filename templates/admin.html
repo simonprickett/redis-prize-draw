@@ -28,7 +28,15 @@
       </article>
     </div>
   {% endif %}
-  {% if draw_open == 0 %}
+  {% if draw_open == 0 and winners_exist == 1 %}
+    <div class="box">
+      <article>
+        <p class="subtitle">The draw is closed and winners have been drawn.</p>
+        <button id="start-new-draw-btn" class="button is-primary">Start New Draw</button>
+      </article>
+    </div>
+  {% endif %}
+  {% if draw_open == 0 and prizes_exist == 0 %}
     <!-- TODO deal with state where a previous draw's winners exist! -->
     <p>State for needing to set up a new draw</p>
     <p>Need some sort of form type control for adding prizes.</p>

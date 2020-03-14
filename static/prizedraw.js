@@ -61,10 +61,17 @@ window.onload = function () {
       });  
 
       if (response.status === 200) {
-        endDrawBtn.classList.add('is-hidden');
-        document.getElementById('draw-open-status').innerHTML = 'The prize draw is now closed.'
-        // TODO consider changing the pick winners button if that is in the also
-        // close draw state...
+        const pickWinnersBtn = document.getElementById('pick-winners-btn');
+
+        if (pickWinnersBtn && pickWinnersBtn.classList.contains('is-danger')) {
+          pickWinnersBtn.classList.remove('is-danger');
+          pickWinnersBtn.classList.add('is-primary');
+          document.getElementById('pick-winners-status').innerHTML = 'The prize draw has closed, it\'s time to pick the winners.';
+          document.getElementById('end-draw-area').classList.add('is-hidden');
+        } else {
+          document.getElementById('draw-open-status').innerHTML = 'The prize draw has closed.';
+          endDrawBtn.classList.add('is-hidden');
+        }
       } else {
         document.getElementById('pick-winners-status').innerHTML = 'There was a problem closing the prize draw :('
       }
