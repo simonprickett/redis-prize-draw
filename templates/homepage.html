@@ -34,9 +34,10 @@
       </div>
     </div>
   </form>
-  {% else %}
+  {% elif draw_open == 0 and not winners and not prizes %}
+  <p>Sorry, we're not running a draw at the moment, check back later!</p>
+  {% elif winners %}
   <h1 class="title">Winners</h1>
-  {% if winners %}
     {% for row in winners | batch(4) %}
     <div class="columns">
       {% for winner in row %}
@@ -55,7 +56,6 @@
   <p>The draw has closed and we are waiting for our winners to be announced!</p>
   <div class="level"></div>
   <button class="button is-link" id="reload-btn">Reload</button>
-  {% endif %}
   {% endif %}
 </section>
 {% endblock %}

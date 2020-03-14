@@ -56,9 +56,10 @@ def get_winners():
 
     # Cache miss :(
     winners = redis.hgetall(get_key_name('winners'))
-    winner_list = []
 
     if (winners):
+        winner_list = []
+
         for prize in winners:
             winner_id = winners[prize]
             winner_profile = get_github_profile(winner_id)
@@ -77,18 +78,15 @@ def get_winners():
         # Cache response to save doing this work over and over.
         redis.set(get_key_name('winners_json'), json.dumps(winner_list))
 
-    return winner_list
+        return winner_list
+
+    return None
 
 @app.route('/')
 def homepage():
     draw_open = redis.exists(get_key_name('is_open'))
-    prizes = None
-    winners = None
-
-    if (draw_open):
-        prizes = get_prizes()
-    else: 
-        winners = get_winners()
+    prizes = get_prizes()
+    winners = get_winners()
 
     return render_template('homepage.html', draw_open = draw_open, prizes = prizes, winners = winners)
 
@@ -181,9 +179,13 @@ def admin_page():
     if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
         session['authenticated'] = True
 
+        # TODO pipeline these...
         draw_open = redis.exists(get_key_name('is_open'))
         winners_exist = redis.exists(get_key_name('winners'))
-        return render_template('admin.html', draw_open = draw_open, winners_exist = winners_exist)
+        prizes_exist = redis.exists(get_key_name('prizes'))
+        num_entrants = redis.scard(get_key_name('entrants'))
+
+        return render_template('admin.html', draw_open = draw_open, winners_exist = winners_exist, prizes_exist = prizes_exist, num_entrants = num_entrants)
     else:
         return render_template('adminlogin.html', error='Bad password.')
    
