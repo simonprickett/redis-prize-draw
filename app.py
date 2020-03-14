@@ -7,10 +7,19 @@ from flask import session
 
 from redis import Redis
 
+from enum import Enum
+
 import json
 import os
 import requests
 import secrets
+
+class PrizeDrawState(Enum):
+    NO_DRAW = 0
+    DRAW_OPEN_NO_ENTRANTS = 1
+    DRAW_OPEN_WITH_ENTRANTS = 2
+    DRAW_CLOSED = 3
+    DRAW_WON = 4
 
 REDIS_KEY_PREFIX = 'prizedraw'
 
@@ -18,11 +27,31 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = secrets.token_urlsafe(16)
 
-# TODO Need to get Redis host, port and password from the environment...
 redis = Redis(host = os.environ.get('REDIS_HOST', 'localhost'), port = os.environ.get('REDIS_PORT', 6379), password = os.environ.get('REDIS_PASSWORD', None), decode_responses = True)
 
 def get_key_name(*args):
     return '{}:{}'.format(REDIS_KEY_PREFIX, ':'.join(args))
+
+def get_draw_state():
+    # TODO pipeline this...
+    draw_open = redis.exists(get_key_name('is_open'))
+    winners_exist = redis.exists(get_key_name('winners'))
+    prizes_exist = redis.exists(get_key_name('prizes'))
+    num_entrants = redis.scard(get_key_name('entrants'))
+
+    if (draw_open == 0 and winners_exist == 0 and prizes_exist == 0):
+        return PrizeDrawState.NO_DRAW
+
+    if (draw_open == 1):
+        if (num_entrants == 0):
+            return PrizeDrawState.DRAW_OPEN_NO_ENTRANTS
+
+        return PrizeDrawState.DRAW_OPEN_WITH_ENTRANTS
+
+    if (draw_open == 0 and winners_exist == 0):
+        return PrizeDrawState.DRAW_CLOSED
+
+    return PrizeDrawState.DRAW_WON
 
 def get_github_profile(github_id):
     profile = redis.get(get_key_name('profiles', github_id))
@@ -84,6 +113,7 @@ def get_winners():
 
 @app.route('/')
 def homepage():
+    print(get_draw_state())
     draw_open = redis.exists(get_key_name('is_open'))
     prizes = get_prizes()
     winners = get_winners()
