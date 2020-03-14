@@ -68,11 +68,17 @@ window.onload = function () {
   const pickWinnersBtn = document.getElementById('pick-winners-btn');
 
   if (pickWinnersBtn) {
-    pickWinnersBtn.onclick = function() {
-      alert('Pick winners!');
-      // TODO POST TO the POST /drawprizes endpoint 
-      // and check the result code, then remove the button and add
-      // some sort of response text...
+    pickWinnersBtn.onclick = async function() {
+      const response = await fetch('/drawprizes', {
+        method: 'POST'
+      });
+
+      if (response.status === 200) {
+        pickWinnersBtn.classList.add('is-hidden');
+        document.getElementById('pick-winners-status').innerHTML = 'Winners have been drawn!'
+      } else {
+        document.getElementById('pick-winners-status').innerHTML = 'There was a problem drawing the winners :('
+      }
     }
   }
 };
