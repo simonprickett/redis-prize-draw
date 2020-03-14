@@ -55,13 +55,19 @@ window.onload = function () {
   const endDrawBtn = document.getElementById('end-draw-btn');
 
   if (endDrawBtn) {
-    endDrawBtn.onclick = function() {
-      alert('End draw!');
-      // TODO POST TO the POST /enddraw endpoint 
-      // and check the result code, then remove the button and add
-      // some sort of response text...
+    endDrawBtn.onclick = async function() {
+      const response = await fetch('/enddraw', {
+        method: 'POST'
+      });  
 
-      // potentially update the messaging around the pick winners button too.
+      if (response.status === 200) {
+        endDrawBtn.classList.add('is-hidden');
+        document.getElementById('draw-open-status').innerHTML = 'The prize draw is now closed.'
+        // TODO consider changing the pick winners button if that is in the also
+        // close draw state...
+      } else {
+        document.getElementById('pick-winners-status').innerHTML = 'There was a problem closing the prize draw :('
+      }
     }
   }
 

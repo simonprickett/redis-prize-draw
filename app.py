@@ -127,10 +127,14 @@ def start_new_draw(prizes, duration):
     # TODO SUBMIT THE PIPELINE
     return 'TODO'
 
-# TODO /enddraw POST route...
 @app.route('/enddraw', methods=['POST'])
 def end_draw():
-    return 'TODO'
+    if (not session['authenticated']):
+        return 'Not authorized.', 403
+
+    redis.delete(get_key_name('is_open'))
+
+    return 'OK'
 
 @app.route('/drawprizes', methods=['POST'])
 def draw_prizes():
