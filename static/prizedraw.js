@@ -81,7 +81,14 @@ window.onload = function () {
 
       if (response.status === 200) {
         pickWinnersBtn.classList.add('is-hidden');
-        document.getElementById('end-draw-area').classList.add('is-hidden');
+
+        // Hide the end draw button if it exists.
+        const endDrawArea = document.getElementById('end-draw-area')
+        
+        if (endDrawArea) {
+          endDrawArea.classList.add('is-hidden');
+        }
+
         document.getElementById('pick-winners-status').innerHTML = 'Winners have been drawn!'
       } else {
         document.getElementById('pick-winners-status').innerHTML = 'There was a problem drawing the winners :('

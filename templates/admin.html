@@ -4,30 +4,34 @@
 <section class="section">
   <h1 class="title">Prize Draw Admin</h1>
   {% if draw_open == 1 %}
-  <div class="box" id="end-draw-area">
-    <article>
-      <p class="subtitle" id="draw-open-status">The prize draw is currently open.</p>
-      <button id="end-draw-btn" class="button is-danger">End Prize Draw</button>    
-    </article>
-  </div>
+    <div class="box" id="end-draw-area">
+      <article>
+        <p class="subtitle" id="draw-open-status">The prize draw is currently open.</p>
+        <button id="end-draw-btn" class="button is-danger">End Prize Draw</button>    
+      </article>
+    </div>
   {% endif %}
-  {% if winners_exist == 0 and prizes_exist == 1 and num_entrants > 0 %}
-  <div class="box">
-    <article>
-      {% if draw_open == 1 %}
-      <p class="subtitle" id="pick-winners-status">The prize draw is currently open - picking winners will also close the draw.</p>
-      <button id="pick-winners-btn" class="button is-danger">Pick Winners</button>    
-      {% else %}
-      <p class="subtitle" id="pick-winners-status">The prize draw has closed, it's time to pick the winners.</p>
-      <button id="pick-winners-btn" class="button is-primary">Pick Winners</button>    
-      {% endif %}
-    </article>
-  </div>
+  {% if winners_exist == 0 and prizes_exist == 1 %}
+    <div class="box">
+      <article>
+        {% if num_entrants > 0 %}
+          {% if draw_open == 1 %}
+            <p class="subtitle" id="pick-winners-status">The prize draw is currently open - picking winners will also close the draw.</p>
+            <button id="pick-winners-btn" class="button is-danger">Pick Winners</button>    
+          {% else %}
+            <p class="subtitle" id="pick-winners-status">The prize draw has closed, it's time to pick the winners.</p>
+            <button id="pick-winners-btn" class="button is-primary">Pick Winners</button>    
+          {% endif %}
+        {% else %}
+          <p class="subtitle" id="pick-winners-status">The prize draw is currently open, but has no entrants.  Winners can't be picked at this time.</p>
+        {% endif %}
+      </article>
+    </div>
   {% endif %}
   {% if draw_open == 0 %}
-  <!-- TODO deal with state where a previous draw's winners exist! -->
-  <p>State for needing to set up a new draw</p>
-  <p>Need some sort of form type control for adding prizes.</p>
+    <!-- TODO deal with state where a previous draw's winners exist! -->
+    <p>State for needing to set up a new draw</p>
+    <p>Need some sort of form type control for adding prizes.</p>
   {% endif %}
 </section>
 {% endblock %}
