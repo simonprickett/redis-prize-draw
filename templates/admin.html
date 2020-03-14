@@ -15,10 +15,10 @@
   <div class="box">
     <article>
       {% if draw_open is sameas 1 %}
-      <p class="subtitle">The prize draw is currently open - picking winners will also close the draw.</p>
+      <p class="subtitle" id="pick-winners-status">The prize draw is currently open - picking winners will also close the draw.</p>
       <button id="pick-winners-btn" class="button is-danger">Pick Winners</button>    
       {% else %}
-      <p class="subtitle">The prize draw has closed, it's time to pick the winners.</p>
+      <p class="subtitle" id="pick-winners-status">The prize draw has closed, it's time to pick the winners.</p>
       <button id="pick-winners-btn" class="button is-primary">Pick Winners</button>    
       {% endif %}
     </article>
