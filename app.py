@@ -113,12 +113,17 @@ def get_winners():
 
 @app.route('/')
 def homepage():
-    print(get_draw_state())
-    draw_open = redis.exists(get_key_name('is_open'))
-    prizes = get_prizes()
-    winners = get_winners()
+    state = get_draw_state()
+    prizes = None
+    winners = None
 
-    return render_template('homepage.html', draw_open = draw_open, prizes = prizes, winners = winners)
+    if (state == PrizeDrawState.DRAW_OPEN_NO_ENTRANTS or state == PrizeDrawState.DRAW_OPEN_WITH_ENTRANTS):
+        prizes = get_prizes()
+    
+    if (state == PrizeDrawState.DRAW_WON):
+        winners = get_winners()
+
+    return render_template('homepage.html', state = state, prizes = prizes, winners = winners)
 
 @app.route('/enter/<github_id>')
 def enter_prize_draw(github_id):
