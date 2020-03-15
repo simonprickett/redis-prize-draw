@@ -127,6 +127,10 @@ def homepage():
 
 @app.route('/enter/<github_id>')
 def enter_prize_draw(github_id):
+    # Check the draw is still open!
+    if (redis.exists(get_key_name('is_open')) == 0):
+        abort(403)
+
     lowercase_id = github_id.lower()
 
     profile = get_github_profile(lowercase_id)

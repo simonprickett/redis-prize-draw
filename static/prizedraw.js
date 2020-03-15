@@ -27,6 +27,11 @@ window.onload = function () {
           enterResult.classList.remove('is-danger');
           enterDrawForm.classList.add('is-hidden');
           break;
+        case 403:
+          enterResultText.innerHTML = 'Sorry, but the draw has now closed.';
+          enterResult.classList.add('is-danger');
+          enterDrawForm.classList.add('is-hidden');
+          break;
         case 404:
           enterResultText.innerHTML = `We couldn't find a GitHub user with ID: "${githubId}".  Check your spelling or try another ID?`;
           enterResult.classList.add('is-danger');
