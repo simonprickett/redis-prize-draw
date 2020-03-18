@@ -1,4 +1,10 @@
 window.onload = function () { 
+    // TODO...
+    //
+    // * Focus the prize entry text field if present.
+    // * Add handler for the + button next to prize entry text field if present.
+    // * Add handler for Open Draw button next to prize entry text field if present.
+    
     const endDrawBtn = document.getElementById('end-draw-btn');
   
     if (endDrawBtn) {

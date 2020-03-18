@@ -35,8 +35,107 @@
   {% endif %}
   {% if state == 'NO_DRAW' or state == 'DRAW_WON' %}
     <!-- TODO deal with state where a previous draw's winners exist! -->
-    <p>State for needing to set up a new draw</p>
-    <p>Need some sort of form type control for adding prizes.</p>
+    <div class="box">
+      <article>
+        <p class="subtitle">Start New Draw</p>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Prize</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control has-icons-left">
+              <input class="input" type="text" placeholder="Prize description...">
+              <span class="icon is-small is-left">
+                <i class="fas fa-gift"></i>
+              </span>
+              </p>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button class="button is-primary">
+                  <span class="icon">
+                    <i class="fas fa-plus-circle"></i>
+                  </span>
+                </button>
+              </div>  
+            </div>
+            <!-- This is the button for when it's populated... -->
+            <!--
+            <div class="field">
+              <div class="control">
+                <button class="button is-danger">
+                  <span class="icon">
+                    <i class="fas fa-minus-circle"></i>
+                  </span>
+                </button>
+              </div>  
+            </div>
+            -->
+          </div>
+        </div>
+        <div class="level"></div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label"></label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="notification is-danger">
+                Please enter a valid, future timestamp!
+              </div>  
+            </div>
+            <!-- This is here just to get the spacing consistent with the prize lines. -->
+            <div class="field is-invisible">
+              <div class="control">
+                <button class="button is-primary">
+                  <span class="icon">
+                    <i class="fas fa-plus-circle"></i>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">End Time</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control has-icons-left">
+              <input class="input" type="text" placeholder="UNIX Timestamp...">
+              <span class="icon is-small is-left">
+                <i class="fas fa-clock"></i>
+              </span>
+              </p>
+            </div>
+            <!-- This is here just to get the spacing consistent with the prize lines. -->
+            <div class="field is-invisible">
+              <div class="control">
+                <button class="button is-primary">
+                  <span class="icon">
+                    <i class="fas fa-plus-circle"></i>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label"></label>
+          </div>
+          <div class="field-body">
+            <div class="control">
+              <button id="open-draw-btn" class="button is-primary">
+                Open Draw
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
   {% endif %}
 </section>
 <script type="text/javascript" src="{{ url_for('static', filename = 'prizedrawadmin.js') }}"></script>
