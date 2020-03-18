@@ -222,14 +222,9 @@ def admin_page():
     if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
         session['authenticated'] = True
 
-        # TODO pipeline these...
-        draw_open = redis.exists(get_key_name('is_open'))
-        # TODO TTL on is_open...
-        winners_exist = redis.exists(get_key_name('winners'))
-        prizes_exist = redis.exists(get_key_name('prizes'))
-        num_entrants = redis.scard(get_key_name('entrants'))
+        state = get_draw_state()
 
-        return render_template('admin.html', draw_open = draw_open, winners_exist = winners_exist, prizes_exist = prizes_exist, num_entrants = num_entrants)
+        return render_template('admin.html', state = state.name)
     else:
         return render_template('adminlogin.html', error='Bad password.')
    
