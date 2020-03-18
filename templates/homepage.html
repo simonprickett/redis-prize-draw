@@ -2,7 +2,7 @@
 
 {% block content %}
 <section class="section">
-  {% if state | string() == 'PrizeDrawState.DRAW_OPEN_NO_ENTRANTS' or state | string() == 'PrizeDrawState.DRAW_OPEN_WITH_ENTRANTS' %}
+  {% if state == 'DRAW_OPEN_NO_ENTRANTS' or state == 'DRAW_OPEN_WITH_ENTRANTS' %}
   <h1 class="title">Prizes</h1>
   <div class="content">
     <p>You could be the lucky winner of one of these prizes:</p>
@@ -34,9 +34,9 @@
       </div>
     </div>
   </form>
-  {% elif state | string() == 'PrizeDrawState.NO_DRAW' %}
+  {% elif state == 'NO_DRAW' %}
   <p>Sorry, we're not running a draw at the moment, check back later!</p>
-  {% elif state | string() == 'PrizeDrawState.DRAW_WON' %}
+  {% elif state == 'DRAW_WON' %}
   <h1 class="title">Winners</h1>
     {% for row in winners | batch(4) %}
     <div class="columns">
@@ -52,7 +52,7 @@
       {% endfor %}
     </div>
     {% endfor %}
-  {% elif state | string() == 'PrizeDrawState.DRAW_CLOSED' %}
+  {% elif state == 'DRAW_CLOSED' %}
   <p>The draw has closed and we are waiting for our winners to be announced!</p>
   <div class="level"></div>
   <button class="button is-link" id="reload-btn">Reload</button>
