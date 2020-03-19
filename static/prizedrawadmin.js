@@ -1,40 +1,46 @@
 window.onload = function () { 
     const prizeTextFields = document.getElementsByClassName('prize-description');
 
+    const addBtnClicked = function (e) {
+      const btnNumber = this.id.split('-')[1];
+
+      // There must be a value in the prize description field.
+      const prizeDescription = document.getElementById(`prize-${btnNumber}-description`);
+
+      if (prizeDescription.value === '') {
+        prizeDescription.focus();
+        return;
+      }
+
+      prizeDescription.setAttribute('readonly', '');
+
+      // Swap the add button for a remove button.
+      this.classList.add('is-hidden');
+      document.getElementById(`prize-${btnNumber}-btn-remove`).classList.remove('is-hidden');
+
+      // TODO add another prize field...
+    };
+
+    const removeBtnClicked = function (e) {
+      const btnNumber = this.id.split('-')[1];
+      
+      // Swap the remove button for the add button.
+      this.classList.add('is-hidden');
+      document.getElementById(`prize-${btnNumber}-btn-add`).classList.remove('is-hidden');
+
+      const prizeDescription = document.getElementById(`prize-${btnNumber}-description`);
+      prizeDescription.value = '';
+      prizeDescription.removeAttribute('readonly');
+
+      // TODO - handle case where this is the first button as they can't remove 
+      //        the first text field!
+    };
+
     if (prizeTextFields.length > 0) {
       prizeTextFields[0].focus();
 
-      const prizeAddBtn = document.getElementById('prize-1-btn-add');
-      const prizeRemoveBtn = document.getElementById('prize-1-btn-remove');
-
-      prizeAddBtn.onclick = function() {
-        // There must be a value in the prize description field.
-        const prizeDescription = document.getElementById('prize-1-description');
-
-        if (prizeDescription.value === '') {
-          prizeDescription.focus();
-          return;
-        }
-
-        prizeDescription.setAttribute('readonly', '');
-
-        // Swap the add button for a remove button.
-        prizeAddBtn.classList.add('is-hidden');
-        prizeRemoveBtn.classList.remove('is-hidden');
-      };
-
-      prizeRemoveBtn.onclick = function() {
-        // Swap the remove button for the add button.
-        prizeRemoveBtn.classList.add('is-hidden');
-        prizeAddBtn.classList.remove('is-hidden');
-
-        const prizeDescription = document.getElementById('prize-1-description');
-        prizeDescription.value = '';
-        prizeDescription.removeAttribute('readonly');
-
-        // TODO - handle case where this is the first button as they can't remove 
-        //        the first text field!
-      };
+      document.getElementById('prize-1-btn-add').onclick = addBtnClicked;
+      document.getElementById('prize-1-btn-remove').onclick = removeBtnClicked;
     }
 
     const openDrawBtn = document.getElementById('open-draw-btn');
