@@ -4,9 +4,31 @@ window.onload = function () {
     if (prizeTextFields.length > 0) {
       prizeTextFields[0].focus();
 
-      document.getElementById('prize-1-btn').onclick = function() {
-        // TODO real functionality!
-        alert('Prize 1 button clicked!');
+      const prizeAddBtn = document.getElementById('prize-1-btn-add');
+      const prizeRemoveBtn = document.getElementById('prize-1-btn-remove');
+
+      prizeAddBtn.onclick = function() {
+        // There must be a value in the prize description field.
+        const prizeDescription = document.getElementById('prize-1-description');
+
+        if (prizeDescription.value === '') {
+          prizeDescription.focus();
+          return;
+        }
+
+        // TODO - make the text field read only.
+
+        // Swap the add button for a remove button.
+        prizeAddBtn.classList.add('is-hidden');
+        prizeRemoveBtn.classList.remove('is-hidden');
+
+        // TODO - handle logic when this is a remove button.
+        // TODO - handle case where this is the first button as they can't remove 
+        //        the first text field!
+      };
+
+      prizeRemoveBtn.onclick = function() {
+        alert('remove!!');
       };
     }
 
