@@ -4,6 +4,12 @@ window.onload = function () {
     // * Focus the prize entry text field if present.
     // * Add handler for the + button next to prize entry text field if present.
     // * Add handler for Open Draw button next to prize entry text field if present.
+
+    const prizeTextFields = document.getElementsByClassName('prize-description');
+
+    if (prizeTextFields.length > 0) {
+      prizeTextFields[0].focus();
+    }
     
     const endDrawBtn = document.getElementById('end-draw-btn');
   
