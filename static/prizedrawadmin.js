@@ -58,8 +58,8 @@ window.onload = function () {
 
         prizes.appendChild(newPrize);
         // TODO what's up with these?
-        document.getElementById(`prize-${nextNumber}-btn-add`).click = addBtnClicked;
-        document.getElementById(`prize-${nextNumber}-btn-remove`).click = removeBtnClicked;
+        document.getElementById(`prize-${nextNumber}-btn-add`).onclick = addBtnClicked;
+        document.getElementById(`prize-${nextNumber}-btn-remove`).onclick = removeBtnClicked;
     };
 
     const removeBtnClicked = function (e) {
