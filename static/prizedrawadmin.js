@@ -1,14 +1,22 @@
 window.onload = function () { 
-    // TODO...
-    //
-    // * Focus the prize entry text field if present.
-    // * Add handler for the + button next to prize entry text field if present.
-    // * Add handler for Open Draw button next to prize entry text field if present.
-
     const prizeTextFields = document.getElementsByClassName('prize-description');
 
     if (prizeTextFields.length > 0) {
       prizeTextFields[0].focus();
+
+      document.getElementById('prize-1-btn').onclick = function() {
+        // TODO real functionality!
+        alert('Prize 1 button clicked!');
+      };
+    }
+
+    const openDrawBtn = document.getElementById('open-draw-btn');
+
+    if (openDrawBtn) {
+      openDrawBtn.onclick = function() {
+        // TODO really open the draw!
+        alert('Open Draw clicked!');
+      };
     }
     
     const endDrawBtn = document.getElementById('end-draw-btn');
