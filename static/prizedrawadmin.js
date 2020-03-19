@@ -18,7 +18,48 @@ window.onload = function () {
       this.classList.add('is-hidden');
       document.getElementById(`prize-${btnNumber}-btn-remove`).classList.remove('is-hidden');
 
-      // TODO add another prize field...
+      const nextNumber = 1 + parseInt(btnNumber, 10);
+
+      // Add another prize field.
+      const newPrizeTemplate = `
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Prize</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control has-icons-left">
+              <input id="prize-${nextNumber}-description" class="input prize-description" type="text" placeholder="Prize description...">
+              <span class="icon is-small is-left">
+                <i class="fas fa-gift"></i>
+              </span>
+              </p>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button id="prize-${nextNumber}-btn-add" class="button is-primary">
+                  <span class="icon">
+                    <i class="fas fa-plus-circle"></i>
+                  </span>
+                </button>
+                <button id="prize-${nextNumber}-btn-remove" class="is-hidden button is-danger">
+                  <span class="icon">
+                    <i class="fas fa-minus-circle"></i>
+                  </span>
+                </button>
+              </div>  
+            </div>
+          </div>
+        </div>`;
+
+        const prizes = document.getElementById('prizes');
+        const newPrize = document.createElement('div');
+        newPrize.innerHTML = newPrizeTemplate;
+
+        prizes.appendChild(newPrize);
+        // TODO what's up with these?
+        document.getElementById(`prize-${nextNumber}-btn-add`).click = addBtnClicked;
+        document.getElementById(`prize-${nextNumber}-btn-remove`).click = removeBtnClicked;
     };
 
     const removeBtnClicked = function (e) {
