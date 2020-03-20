@@ -94,16 +94,23 @@
         </div>
         <div class="field is-horizontal">
           <div class="field-label is-normal">
-            <label class="label">End Time</label>
+            <label class="label">Duration</label>
           </div>
           <div class="field-body">
             <div class="field">
-              <p class="control has-icons-left">
-              <input class="input" type="text" placeholder="UNIX Timestamp...">
-              <span class="icon is-small is-left">
-                <i class="fas fa-clock"></i>
-              </span>
-              </p>
+              <div class="select">
+                <select>
+                  <option value="0">Until closed manually</option>
+                  <option value="900">15 minutes</option>
+                  <option value="1800">30 minutes</option>
+                  <option value="2700">45 minutes</option>
+                  <option value="3600">1 hour</option>
+                  <option value="4500">1 hour 15 minutes</option>
+                  <option value="5400">1 hour 30 minutes</option>
+                  <option value="6300">1 hour 45 minutes</option>
+                  <option value="7200">2 hours</option>                  
+                </select>
+              </div>
             </div>
             <!-- This is here just to get the spacing consistent with the prize lines. -->
             <div class="field is-invisible">
