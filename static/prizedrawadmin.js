@@ -95,6 +95,8 @@ window.onload = function () {
     if (openDrawBtn) {
       openDrawBtn.onclick = function() {
         // TODO really open the draw!
+        // Check there's 1 or more prizes, and if 1 that it has text 
+        // in the description field.
         alert('Open Draw clicked!');
       };
     }
