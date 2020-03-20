@@ -1,6 +1,14 @@
 window.onload = function () { 
     const prizeTextFields = document.getElementsByClassName('prize-description');
 
+    const keyPressed = function (e) {
+      if (e.keyCode === 13) {
+        // Add the prize!
+        const btnNumber = this.id.split('-')[1];
+        document.getElementById(`prize-${btnNumber}-btn-add`).click();
+      }
+    };
+
     const addBtnClicked = function (e) {
       const btnNumber = this.id.split('-')[1];
 
@@ -57,9 +65,13 @@ window.onload = function () {
         newPrize.innerHTML = newPrizeTemplate;
 
         prizes.appendChild(newPrize);
-        // TODO what's up with these?
+
         document.getElementById(`prize-${nextNumber}-btn-add`).onclick = addBtnClicked;
         document.getElementById(`prize-${nextNumber}-btn-remove`).onclick = removeBtnClicked;
+
+        const newPrizeDescription = document.getElementById(`prize-${nextNumber}-description`);
+        newPrizeDescription.onkeypress = keyPressed;
+        newPrizeDescription.focus();
     };
 
     const removeBtnClicked = function (e) {
@@ -82,6 +94,7 @@ window.onload = function () {
 
       document.getElementById('prize-1-btn-add').onclick = addBtnClicked;
       document.getElementById('prize-1-btn-remove').onclick = removeBtnClicked;
+      document.getElementById('prize-1-description').onkeypress = keyPressed;
     }
 
     const openDrawBtn = document.getElementById('open-draw-btn');
