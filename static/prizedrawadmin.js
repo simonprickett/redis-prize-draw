@@ -62,6 +62,7 @@ window.onload = function () {
         const newPrize = document.createElement('div');
 
         newPrize.className = 'field is-horizontal';
+        newPrize.id = `prize-${nextNumber}-field`;
         newPrize.innerHTML = newPrizeTemplate;
 
         prizes.appendChild(newPrize);
@@ -76,17 +77,9 @@ window.onload = function () {
 
     const removeBtnClicked = function (e) {
       const btnNumber = this.id.split('-')[1];
-      
-      // Swap the remove button for the add button.
-      this.classList.add('is-hidden');
-      document.getElementById(`prize-${btnNumber}-btn-add`).classList.remove('is-hidden');
 
-      const prizeDescription = document.getElementById(`prize-${btnNumber}-description`);
-      prizeDescription.value = '';
-      prizeDescription.removeAttribute('readonly');
-
-      // TODO - handle case where this is the first button as they can't remove 
-      //        the first text field!
+      // Remove the field for this prize.
+      document.getElementById(`prize-${btnNumber}-field`).remove();
     };
 
     if (prizeTextFields.length > 0) {
