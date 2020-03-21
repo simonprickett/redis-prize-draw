@@ -94,10 +94,48 @@ window.onload = function () {
 
     if (openDrawBtn) {
       openDrawBtn.onclick = function() {
-        // TODO really open the draw!
-        // Check there's 1 or more prizes, and if 1 that it has text 
-        // in the description field.
-        alert('Open Draw clicked!');
+        const prizeError = document.getElementById('prize-error');
+
+        // Hide the error notification if needed.
+        if (! prizeError.classList.contains('is-hidden')) {
+          document.getElementById('prize-error').classList.add('is-hidden');
+        }
+
+        // There must be at least one prize, and it must have a 
+        // description!  Each prize description must be unique as
+        // the are stored in a set in Redis...
+
+        const prizeElement= document.getElementById('prizes').getElementsByTagName('input');
+        const prizes = new Set();
+        // might need to remember we have seen an empty prize...
+
+        for (const prizeInput of prizeElement) {
+          const prizeDescription = prizeInput.value;
+
+          if (prizeDescription.length > 0) {
+            if (prizes.has(prizeDescription)) {
+              document.getElementById('prize-error-text').innerHTML = 'Each prize needs to have a unique name!';
+              prizeError.classList.remove('is-hidden');
+              return;
+            }
+
+            prizes.add(prizeInput.value);
+          }
+        }
+
+        if (prizes.size === 0) {
+          // Can't open a draw without a prize!
+          document.getElementById('prize-error-text').innerHTML = 'Add at least one prize to start a draw!';
+          prizeError.classList.remove('is-hidden');
+          return;
+        }
+
+        // Open the draw...
+        const drawDuration = document.getElementById('draw-duration').value;
+        const prizeArray = Array.from(prizes);
+
+        console.log(drawDuration);
+        console.log(prizeArray);
       };
     }
     

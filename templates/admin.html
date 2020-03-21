@@ -70,15 +70,25 @@
           </div>
         </div>
         <div class="level"></div>
-        <div id="bad-timestamp-error" class="field is-horizontal is-hidden">
+        <div class="field is-horizontal">
           <div class="field-label is-normal">
-            <label class="label"></label>
+            <label class="label">Duration</label>
           </div>
           <div class="field-body">
             <div class="field">
-              <div class="notification is-danger">
-                Please enter a valid, future timestamp!
-              </div>  
+              <div class="select">
+                <select id="draw-duration">
+                  <option value="0">Until closed manually</option>
+                  <option value="900">15 minutes</option>
+                  <option value="1800">30 minutes</option>
+                  <option value="2700">45 minutes</option>
+                  <option value="3600">1 hour</option>
+                  <option value="4500">1 hour 15 minutes</option>
+                  <option value="5400">1 hour 30 minutes</option>
+                  <option value="6300">1 hour 45 minutes</option>
+                  <option value="7200">2 hours</option>                  
+                </select>
+              </div>
             </div>
             <!-- This is here just to get the spacing consistent with the prize lines. -->
             <div class="field is-invisible">
@@ -92,25 +102,14 @@
             </div>
           </div>
         </div>
-        <div class="field is-horizontal">
+        <div id="prize-error" class="field is-horizontal is-hidden">
           <div class="field-label is-normal">
-            <label class="label">Duration</label>
+            <label class="label"></label>
           </div>
           <div class="field-body">
             <div class="field">
-              <div class="select">
-                <select>
-                  <option value="0">Until closed manually</option>
-                  <option value="900">15 minutes</option>
-                  <option value="1800">30 minutes</option>
-                  <option value="2700">45 minutes</option>
-                  <option value="3600">1 hour</option>
-                  <option value="4500">1 hour 15 minutes</option>
-                  <option value="5400">1 hour 30 minutes</option>
-                  <option value="6300">1 hour 45 minutes</option>
-                  <option value="7200">2 hours</option>                  
-                </select>
-              </div>
+              <div id="prize-error-text" class="notification is-danger">
+              </div>  
             </div>
             <!-- This is here just to get the spacing consistent with the prize lines. -->
             <div class="field is-invisible">
