@@ -33,11 +33,19 @@ def get_key_name(*args):
     return '{}:{}'.format(REDIS_KEY_PREFIX, ':'.join(args))
 
 def get_draw_state():
-    # TODO pipeline this...
-    draw_open = redis.exists(get_key_name('is_open'))
-    winners_exist = redis.exists(get_key_name('winners'))
-    prizes_exist = redis.exists(get_key_name('prizes'))
-    num_entrants = redis.scard(get_key_name('entrants'))
+    pipeline = redis.pipeline()
+
+    pipeline.exists(get_key_name('is_open'))
+    pipeline.exists(get_key_name('winners'))
+    pipeline.exists(get_key_name('prizes'))
+    pipeline.scard(get_key_name('entrants'))
+
+    responses = pipeline.execute()
+
+    draw_open = responses[0]
+    winners_exist = responses[1]
+    prizes_exist = responses[2]
+    num_entrants = responses[3]
 
     if (draw_open == 0 and winners_exist == 0 and prizes_exist == 0):
         return PrizeDrawState.NO_DRAW
@@ -149,27 +157,40 @@ def enter_prize_draw(github_id):
     # Github ID was successfully entered, return the profile.
     return jsonify(profile)
 
-@app.route('/setupdraw', methods=['POST'])
-def start_new_draw(prizes, duration):
+@app.route('/startdraw', methods=['POST'])
+def start_new_draw():
     if (not session['authenticated']):
-        return 'Not authorized.', 403
+        abort(403)
+
+    pipeline = redis.pipeline()
 
     # Delete any previous draw data.  Uses delete not unlink as 
     # we are about to SADD members to 'prizes' again so want to 
     # make sure the old 'prizes' was definitely deleted before 
     # adding the new set of prizes to it...
-    redis.delete(get_key_name('entrants'), get_key_name('winners'), get_key_name('winners_json'), get_key_name('prizes'))
+    pipeline.delete(get_key_name('entrants'), get_key_name('winners'), get_key_name('winners_json'), get_key_name('prizes'))
+    
+    # Add all the prizes to a set.
+    pipeline.sadd(get_key_name('prizes'), *request.json['prizes'])
 
-    # TODO START A PIPELINE
-    # TODO write prizes to a set using variadic SADD...
-    # TODO set is_open with expiry
-    # TODO SUBMIT THE PIPELINE
-    return 'TODO'
+    # Mark the draw as open and set any duration.
+    duration = int(request.json['duration'])
+
+    if (duration == 0):
+        duration = None
+
+    pipeline.set(get_key_name('is_open'), 'true', ex=duration)
+
+    responses = pipeline.execute()
+
+    return 'OK'
 
 @app.route('/enddraw', methods=['POST'])
 def end_draw():
+    # TODO this pattern doesn't necessarily work try it again
+    # and catch KeyError instead?
     if (not session['authenticated']):
-        return 'Not authorized.', 403
+        abort(403)
 
     redis.delete(get_key_name('is_open'))
 
@@ -178,7 +199,7 @@ def end_draw():
 @app.route('/drawprizes', methods=['POST'])
 def draw_prizes():
     if (not session['authenticated']):
-        return 'Not authorized.', 403
+        abort(403)
 
     # Close the prize draw if it is still open.
     redis.unlink(get_key_name('is_open'))
@@ -222,6 +243,7 @@ def admin_page():
     if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
         session['authenticated'] = True
 
+        # TODO NEED A STATE FOR DRAW ENDED WITH NO ENTRANTS!!
         state = get_draw_state()
 
         return render_template('admin.html', state = state.name)

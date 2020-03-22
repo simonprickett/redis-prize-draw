@@ -93,7 +93,7 @@ window.onload = function () {
     const openDrawBtn = document.getElementById('open-draw-btn');
 
     if (openDrawBtn) {
-      openDrawBtn.onclick = function() {
+      openDrawBtn.onclick = async function() {
         const prizeError = document.getElementById('prize-error');
 
         // Hide the error notification if needed.
@@ -134,10 +134,25 @@ window.onload = function () {
         const drawDuration = document.getElementById('draw-duration').value;
         const prizeArray = Array.from(prizes);
 
-        console.log(drawDuration);
-        console.log(prizeArray);
+        const drawDetails = {
+          prizes: prizeArray,
+          duration: drawDuration
+        };
 
-        // TODO POST to /setupdraw
+        const response = await fetch('/startdraw', {
+          method: 'POST',
+          body: JSON.stringify(drawDetails),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.status === 200) {
+          // Draw is now open, reload to get new admin page state.
+          window.location.reload();
+        } else {
+          // TODO error case... use the existing error notification.
+        }
       };
     }
     
