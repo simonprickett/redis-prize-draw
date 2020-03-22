@@ -149,10 +149,10 @@ def enter_prize_draw(github_id):
     # Github ID was successfully entered, return the profile.
     return jsonify(profile)
 
-@app.route('/setupdraw')
+@app.route('/setupdraw', methods=['POST'])
 def start_new_draw(prizes, duration):
-    # TODO this is a POST request.
-    # TODO CHECK FOR VALID ADMIN SESSION!
+    if (not session['authenticated']):
+        return 'Not authorized.', 403
 
     # Delete any previous draw data.  Uses delete not unlink as 
     # we are about to SADD members to 'prizes' again so want to 
@@ -161,7 +161,7 @@ def start_new_draw(prizes, duration):
     redis.delete(get_key_name('entrants'), get_key_name('winners'), get_key_name('winners_json'), get_key_name('prizes'))
 
     # TODO START A PIPELINE
-    # TODO write prizes to a set
+    # TODO write prizes to a set using variadic SADD...
     # TODO set is_open with expiry
     # TODO SUBMIT THE PIPELINE
     return 'TODO'

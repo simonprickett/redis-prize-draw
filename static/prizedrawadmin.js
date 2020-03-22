@@ -136,6 +136,8 @@ window.onload = function () {
 
         console.log(drawDuration);
         console.log(prizeArray);
+
+        // TODO POST to /setupdraw
       };
     }
     
