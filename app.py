@@ -18,8 +18,9 @@ class PrizeDrawState(Enum):
     NO_DRAW = 0
     DRAW_OPEN_NO_ENTRANTS = 1
     DRAW_OPEN_WITH_ENTRANTS = 2
-    DRAW_CLOSED = 3
-    DRAW_WON = 4
+    DRAW_CLOSED_NO_ENTRANTS = 3
+    DRAW_CLOSED_WITH_ENTRANTS = 4
+    DRAW_WON = 5
 
 REDIS_KEY_PREFIX = 'prizedraw'
 
@@ -57,7 +58,10 @@ def get_draw_state():
         return PrizeDrawState.DRAW_OPEN_WITH_ENTRANTS
 
     if (draw_open == 0 and winners_exist == 0):
-        return PrizeDrawState.DRAW_CLOSED
+        if (num_entrants == 0):
+            return PrizeDrawState.DRAW_CLOSED_NO_ENTRANTS
+
+        return PrizeDrawState.DRAW_CLOSED_WITH_ENTRANTS
 
     return PrizeDrawState.DRAW_WON
 
@@ -242,8 +246,6 @@ def admin_page():
 
     if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
         session['authenticated'] = True
-
-        # TODO NEED A STATE FOR DRAW ENDED WITH NO ENTRANTS!!
         state = get_draw_state()
 
         return render_template('admin.html', state = state.name)

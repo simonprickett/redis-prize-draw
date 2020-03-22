@@ -11,7 +11,7 @@
       </article>
     </div>
   {% endif %}
-  {% if state == 'DRAW_OPEN_NO_ENTRANTS' or state == 'DRAW_OPEN_WITH_ENTRANTS' or state == 'DRAW_CLOSED' %}
+  {% if state == 'DRAW_OPEN_NO_ENTRANTS' or state == 'DRAW_OPEN_WITH_ENTRANTS' or state == 'DRAW_CLOSED_NO_ENTRANTS' or state == 'DRAW_CLOSED_WITH_ENTRANTS' %}
     <div class="box">
       <article>
         {% if state == 'DRAW_OPEN_NO_ENTRANTS' %}
@@ -19,10 +19,12 @@
         {% elif state == 'DRAW_OPEN_WITH_ENTRANTS' %}
           <p class="subtitle" id="pick-winners-status">The prize draw is currently open - picking winners will also close the draw.</p>
           <button id="pick-winners-btn" class="button is-danger">Pick Winners</button>    
-        {% elif state == 'DRAW_CLOSED' %}
+        {% elif state == 'DRAW_CLOSED_WITH_ENTRANTS' %}
           <p class="subtitle" id="pick-winners-status">The prize draw has closed, it's time to pick the winners.</p>
           <button id="pick-winners-btn" class="button is-primary">Pick Winners</button>    
-        {% endif %}
+        {% elif state == 'DRAW_CLOSED_NO_ENTRANTS' %}
+          <p class="subtitle" id="pick-winners-status">The prize draw closed with no entrants.</p>
+        {% endif %}        
       </article>
     </div>
   {% endif %}
@@ -33,8 +35,7 @@
       </article>
     </div>
   {% endif %}
-  {% if state == 'NO_DRAW' or state == 'DRAW_WON' %}
-    <!-- TODO deal with state where a previous draw's winners exist! -->
+  {% if state == 'NO_DRAW' or state == 'DRAW_WON' or state == 'DRAW_CLOSED_NO_ENTRANTS' %}
     <div class="box">
       <article>
         <p class="subtitle">Start New Draw</p>
