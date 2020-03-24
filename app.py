@@ -135,6 +135,9 @@ def homepage():
     if (state == PrizeDrawState.DRAW_WON):
         winners = get_winners()
 
+
+    print(state)
+
     return render_template('homepage.html', state = state.name, prizes = prizes, winners = winners)
 
 @app.route('/enter/<github_id>')

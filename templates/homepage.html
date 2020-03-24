@@ -52,7 +52,7 @@
       {% endfor %}
     </div>
     {% endfor %}
-  {% elif state == 'DRAW_CLOSED' %}
+  {% elif state == 'DRAW_CLOSED_NO_ENTRANTS' or state == 'DRAW_CLOSED_WITH_ENTRANTS' %}
   <p>The draw has closed and we are waiting for our winners to be announced!</p>
   <div class="level"></div>
   <button class="button is-link" id="reload-btn">Reload</button>
