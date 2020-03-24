@@ -34,7 +34,7 @@
       </div>
     </div>
   </form>
-  {% elif state == 'NO_DRAW' %}
+  {% elif state == 'NO_DRAW' or state == 'DRAW_CLOSED_NO_ENTRANTS' %}
   <p>Sorry, we're not running a draw at the moment, check back later!</p>
   {% elif state == 'DRAW_WON' %}
   <h1 class="title">Winners</h1>
@@ -52,7 +52,7 @@
       {% endfor %}
     </div>
     {% endfor %}
-  {% elif state == 'DRAW_CLOSED_NO_ENTRANTS' or state == 'DRAW_CLOSED_WITH_ENTRANTS' %}
+  {% elif state == 'DRAW_CLOSED_WITH_ENTRANTS' %}
   <p>The draw has closed and we are waiting for our winners to be announced!</p>
   <div class="level"></div>
   <button class="button is-link" id="reload-btn">Reload</button>
