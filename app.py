@@ -163,7 +163,7 @@ def enter_prize_draw(github_id):
 
 @app.route('/startdraw', methods=['POST'])
 def start_new_draw():
-    if (not session['authenticated']):
+    if (not session.get('authenticated')):
         abort(403)
 
     pipeline = redis.pipeline()
@@ -191,9 +191,7 @@ def start_new_draw():
 
 @app.route('/enddraw', methods=['POST'])
 def end_draw():
-    # TODO this pattern doesn't necessarily work try it again
-    # and catch KeyError instead?
-    if (not session['authenticated']):
+    if (not session.get('authenticated')):
         abort(403)
 
     redis.delete(get_key_name('is_open'))
@@ -202,7 +200,7 @@ def end_draw():
 
 @app.route('/drawprizes', methods=['POST'])
 def draw_prizes():
-    if (not session['authenticated']):
+    if (not session.get('authenticated')):
         abort(403)
 
     # Close the prize draw if it is still open.
@@ -239,9 +237,8 @@ def draw_prizes():
 
 @app.route('/admin', methods=['GET', 'POST']) 
 def admin_page():
-    session.clear()
-
     if (request.method == 'GET'):
+        session.clear()
         return render_template('adminlogin.html')
 
     if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
