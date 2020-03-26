@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import abort
 from flask import jsonify
+from flask import redirect
 from flask import render_template
 from flask import request
 from flask import session
@@ -122,6 +123,12 @@ def get_winners():
         return winner_list
 
     return None
+
+@app.before_request
+def before_request():
+    if request.headers.get('X-Forwarded-Proto') == 'http' and app.env != 'development':
+        url = request.url.replace('http://', 'https://', 1)
+        return redirect(url, code=301)
 
 @app.route('/')
 def homepage():
