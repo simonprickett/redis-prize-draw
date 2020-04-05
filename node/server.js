@@ -161,18 +161,24 @@ app.post('/startdraw', (req, res) => {
 });
 
 // Close the draw manually (rather than letting any time period expire).
-app.post('/enddraw', (req, res) => {
-  // TODO
+app.post('/enddraw', async (req, res) => {
+  // TODO session management...
+  //if (not session.get('authenticated')):
+  //abort(403)
+
+  await redisClient.delAsync(getKeyName('is_open'));
+
+  res.send('OK')
 });
 
 // Draw a winner for each prize.
-app.post('/drawprizes', (req, res) => {
+app.post('/drawprizes', async (req, res) => {
   // TODO
 });
 
 // Serve the admin login page.
 app.get('/admin', (req, res) => {
-  // TODO
+  res.render('adminlogin');
 });
 
 // Process admin login request.

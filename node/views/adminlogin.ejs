@@ -1,0 +1,24 @@
+<%- contentFor('content') %>
+<section class="section">
+  <% if (typeof error === 'string') { %>
+  <div class="notification is-danger">
+    <%= error %>
+  </div>
+  <% } %>
+  <form id="admin-login" autocomplete="off" action="/admin" method="POST">
+    <div class="field">
+      <label class="label">Password</label>
+      <div class="control has-icons-left">
+        <input name="password" class="input" type="password" placeholder="" value="" autofocus>
+        <span class="icon is-small is-left">
+          <i class="fas fa-unlock"></i>
+        </span>
+      </div>
+    </div>
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-link" type="submit">Login</button>
+      </div>
+    </div>
+  </form>
+</section>
