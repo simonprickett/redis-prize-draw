@@ -85,6 +85,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
+app.use(express.static('public'));
 
 // Home page.
 app.get('/', async (req, res) => {
@@ -99,7 +100,7 @@ app.get('/', async (req, res) => {
     winners = getWinners();
   }
 
-  res.render('homepage');
+  res.render('homepage', { state, prizes, winners });
 });
 
 // /enter/githubId route.
