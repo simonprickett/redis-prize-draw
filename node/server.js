@@ -155,28 +155,29 @@ app.get('/enter/:gitHubId', async (req, res) => {
   res.json(profile)
 });
 
-// /startdraw POST route.
+// Start the draw.
 app.post('/startdraw', (req, res) => {
-
+  // TODO
 });
 
-// /enddraw POST route.
+// Close the draw manually (rather than letting any time period expire).
 app.post('/enddraw', (req, res) => {
-
+  // TODO
 });
 
-// /drawprizes POST route.
+// Draw a winner for each prize.
 app.post('/drawprizes', (req, res) => {
-
+  // TODO
 });
 
-// /admin GET and POST routes.
+// Serve the admin login page.
 app.get('/admin', (req, res) => {
-
+  // TODO
 });
 
+// Process admin login request.
 app.post('/admin', (req, res) => {
-
+  // TODO
 });
 
 // Start the server.
