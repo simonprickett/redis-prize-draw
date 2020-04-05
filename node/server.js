@@ -1,6 +1,7 @@
 const bluebird = require('bluebird');
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const fetch = require('node-fetch');
 const path = require('path');
 const redis = require('redis');
 
@@ -42,12 +43,8 @@ const getDrawState = async () => {
   pipeline.scard(getKeyName('entrants'));
 
   const responses = await pipeline.execAsync();
-  
-  const drawOpen = parseInt(responses[0], 10);
-  const winnersExist = parseInt(responses[1], 10);
-  const prizesExist = parseInt(responses[2], 10);
-  const numEntrants = parseInt(responses[3], 10);
-  
+  const [drawOpen, winnersExist, prizesExist, numEntrants] = responses;
+
   if (drawOpen === 0 && winnersExist === 0) {
     if (prizesExist === 0) {
       // The draw is not operating right now.
@@ -65,7 +62,7 @@ const getDrawState = async () => {
     // The draw is currently open.
     return (numEntrants === 0
       ? prizeDrawState.DRAW_OPEN_NO_ENTRANTS
-      : prizeDrawState.DRAW_CLOSED_NO_ENTRANTS
+      : prizeDrawState.DRAW_OPEN_WITH_ENTRANTS
     );
   }
 
@@ -74,11 +71,35 @@ const getDrawState = async () => {
 };
 
 // Get the GitHub profile information for the supplied ID.
-const getGitHubProfile = (gitHubId) => {
-  // TODO
+const getGitHubProfile = async (gitHubId) => {
+  const profileKey = getKeyName('profiles', gitHubId);
+
+  let profile = await redisClient.getAsync(profileKey);
+
+  if (profile) {
+    return JSON.parse(profile);
+  }
+
+  // Cache miss on the profile, get it from origin at GitHub.
+  const response = await fetch(`https://api.github.com/users/${gitHubId}`);
+
+  if (response.status === 200) {
+    profile = await response.json();
+
+    // Cache this profile in Redis for an hour (3600 seconds).
+    // Don't wait for a response, as don't need it and if this fails
+    // we will just get the profile from GitHub next time.
+    redisClient.set(profileKey, JSON.stringify(profile), 'EX', 3600);
+  }
+
+  return profile;
 };
 
+// Get an array of prizes.
 const getPrizes = async () => redisClient.smembersAsync(getKeyName('prizes'));
+
+// Set up Fetch.
+fetch.Promise = bluebird;
 
 // Set up Express.
 const app = express();
@@ -103,9 +124,31 @@ app.get('/', async (req, res) => {
   res.render('homepage', { state, prizes, winners });
 });
 
-// /enter/githubId route.
-app.get('/enter/:githubId', (req, res) => {
+// A user enters the prize draw...
+app.get('/enter/:gitHubId', async (req, res) => {
+  // Check the draw is still open!
+  const drawOpen = await redisClient.existsAsync(getKeyName('is_open'));
 
+  if (drawOpen === 0) {
+    return res.status(403).send();
+  }
+  
+  const lowercaseId = req.params.gitHubId.toLowerCase();
+  const profile = await getGitHubProfile(lowercaseId);
+
+  if (! profile) {
+    return res.status(404).send();
+  }
+
+  // Try entering this GitHub ID into the draw.
+  const memberAdded = await redisClient.saddAsync(getKeyName('entrants'), lowercaseId);
+
+  if (memberAdded === 0) {
+    // This GitHub ID has already entered the draw.
+    return res.status(400).send();
+  }
+
+  res.json(profile)
 });
 
 // /startdraw POST route.
