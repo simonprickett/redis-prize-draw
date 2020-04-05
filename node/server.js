@@ -1,6 +1,8 @@
 const bluebird = require('bluebird');
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const expressSession = require('express-session');
+const expressBodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const path = require('path');
 const redis = require('redis');
@@ -10,6 +12,7 @@ const REDIS_KEY_PREFIX = 'prizedraw';
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD || null;
+const PRIZE_DRAW_PASSWORD = process.env.PRIZE_DRAW_PASSWORD;
 
 const prizeDrawState = Object.freeze({
   NO_DRAW: 'NO_DRAW',
@@ -88,6 +91,12 @@ const getGitHubProfile = async (gitHubId) => {
 // Get an array of prizes.
 const getPrizes = async () => redisClient.smembersAsync(getKeyName('prizes'));
 
+// Exit if PRIZE_DRAW_PASSWORD is not set.
+if (! PRIZE_DRAW_PASSWORD) {
+  console.error('PRIZE_DRAW_PASSWORD environment variable must be set!');
+  process.exit(1);
+}
+
 // Set up Fetch.
 fetch.Promise = bluebird;
 
@@ -111,6 +120,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 app.use(express.static('public'));
+app.use(expressSession({
+  secret: '${Date.now()}',
+  resave: false,
+  saveUninitialized: true,
+}));
+app.use(expressBodyParser.urlencoded({ 
+  extended: true 
+}));
 
 // Home page.
 app.get('/', async (req, res) => {
@@ -178,13 +195,22 @@ app.post('/drawprizes', async (req, res) => {
 
 // Serve the admin login page.
 app.get('/admin', (req, res) => {
-  res.render('adminlogin');
+  req.session.destroy(() => {
+    res.render('adminlogin');
+  });
 });
 
 // Process admin login request.
 app.post('/admin', (req, res) => {
-  // TODO
-  res.render('admin');
+  if (req.body.password && req.body.password === PRIZE_DRAW_PASSWORD) {
+    req.session.authenticated = true;
+    const state = getDrawState();
+    return res.render('admin', { state });
+  }
+  
+  req.session.destroy(() => {
+    res.render('adminlogin', { error: 'Bad password.' });
+  });
 });
 
 // Start the server.
