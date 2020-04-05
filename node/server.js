@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 const REDIS_KEY_PREFIX = 'prizedraw';
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
-const REDIS_PASSWORD = process.env.REDIS_PASSWORD || undefined;
+const REDIS_PASSWORD = process.env.REDIS_PASSWORD || null;
 
 const prizeDrawState = Object.freeze({
   NO_DRAW: 'NO_DRAW',
@@ -19,16 +19,6 @@ const prizeDrawState = Object.freeze({
   DRAW_CLOSED_WITH_ENTRANTS: 'DRAW_CLOSED_WITH_ENTRANTS',
   DRAW_WON: 'DRAW_WON'
 });
-
-// Connect to Redis.
-bluebird.promisifyAll(redis);
-
-const redisClient = redis.createClient({
-  host: REDIS_HOST,
-  port: REDIS_PORT
-});
-
-// TODO PASSWORD...
 
 // Utility function to get a prefixed Redis key name.
 const getKeyName = (...args) => `${REDIS_KEY_PREFIX}:${args.join(':')}`;
@@ -100,6 +90,20 @@ const getPrizes = async () => redisClient.smembersAsync(getKeyName('prizes'));
 
 // Set up Fetch.
 fetch.Promise = bluebird;
+
+// Connect to Redis and promisify all functions.
+bluebird.promisifyAll(redis);
+
+const redisConfig = {
+  host: REDIS_HOST,
+  port: REDIS_PORT
+};
+
+if (REDIS_PASSWORD) {
+  redisConfig.password = REDIS_PASSWORD;
+}
+
+const redisClient = redis.createClient(redisConfig);
 
 // Set up Express.
 const app = express();
