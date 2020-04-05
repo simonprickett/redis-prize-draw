@@ -174,14 +174,18 @@ app.get('/enter/:gitHubId', async (req, res) => {
 
 // Start the draw.
 app.post('/startdraw', (req, res) => {
+  if (! req.session.authenticated) {
+    return res.status(403).send();
+  }
+
   // TODO
 });
 
 // Close the draw manually (rather than letting any time period expire).
 app.post('/enddraw', async (req, res) => {
-  // TODO session management...
-  //if (not session.get('authenticated')):
-  //abort(403)
+  if (! req.session.authenticated) {
+    return res.status(403).send();
+  }
 
   await redisClient.delAsync(getKeyName('is_open'));
 
@@ -190,6 +194,10 @@ app.post('/enddraw', async (req, res) => {
 
 // Draw a winner for each prize.
 app.post('/drawprizes', async (req, res) => {
+  if (! req.session.authenticated) {
+    return res.status(403).send();
+  }
+
   // TODO
 });
 
