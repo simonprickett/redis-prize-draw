@@ -184,6 +184,7 @@ app.get('/admin', (req, res) => {
 // Process admin login request.
 app.post('/admin', (req, res) => {
   // TODO
+  res.render('admin');
 });
 
 // Start the server.
