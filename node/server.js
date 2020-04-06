@@ -209,10 +209,10 @@ app.get('/admin', (req, res) => {
 });
 
 // Process admin login request.
-app.post('/admin', (req, res) => {
+app.post('/admin', async (req, res) => {
   if (req.body.password && req.body.password === PRIZE_DRAW_PASSWORD) {
     req.session.authenticated = true;
-    const state = getDrawState();
+    const state = await getDrawState();
     return res.render('admin', { state });
   }
   
