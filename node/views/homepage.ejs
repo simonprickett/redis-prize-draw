@@ -1,0 +1,61 @@
+<%- contentFor('content') %>
+<section class="section">
+  <% if (state === 'DRAW_OPEN_NO_ENTRANTS' || state === 'DRAW_OPEN_WITH_ENTRANTS') { %>
+  <h1 class="title">Prizes</h1>
+  <div class="content">
+    <p>You could be the lucky winner of one of these prizes:</p>
+    <ul>
+      <% for (const prize of prizes) { %>
+      <li><%= prize %></li>
+      <% } %>
+    </ul>
+  </div>
+  <h1 class="title">Enter the Draw</h1>
+  <p>To have a chance at winning a prize, simply provide your GitHub ID.</p>
+  <div class="level"></div>
+  <div id="enter-result" class="notification is-hidden">
+    <div id="enter-result-text"></div>
+  </div>
+  <form id="enter-draw" autocomplete="off">
+    <div class="field">
+      <label class="label">GitHub ID</label>
+      <div class="control has-icons-left">
+        <input id="github-id" class="input" type="text" placeholder="octocat" value="" autofocus>
+        <span class="icon is-small is-left">
+          <i class="fab fa-github"></i>
+        </span>
+      </div>
+    </div>
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-link" type="submit">Submit</button>
+      </div>
+    </div>
+  </form>
+  <% } else if (state === 'NO_DRAW' || state === 'DRAW_CLOSED_NO_ENTRANTS') { %>
+  <p>Sorry, we're not running a draw at the moment, check back later!</p>
+  <% } else if (state === 'DRAW_WON') { %>
+  <h1 class="title">Winners</h1>
+    <% for (let n = 0; n < winners.length; n++) { %> 
+    <% if (n % 4 === 0) { %>  
+    <div class="columns">
+    <% } %>
+      <div class="column is-3">
+        <article class="box">
+          <figure class="image">
+            <img src="<%= winners[n].image %>">
+          </figure>   
+          <p class="has-text-weight-bold"><%= winners[n].name %>: <%= winners[n].prize %></p>
+        </article>
+      </div>
+    <% if (((n + 1) % 4 === 0) || n === winners.length - 1) { %>
+    </div>
+    <% } %>
+    <% } %>
+  <% } else if (state === 'DRAW_CLOSED_WITH_ENTRANTS') { %>
+  <p>The draw has closed and we are waiting for our winners to be announced!</p>
+  <div class="level"></div>
+  <button class="button is-link" id="reload-btn">Reload</button>
+  <% } %>
+</section>
+<script type="text/javascript" src="/prizedraw.js"></script>
