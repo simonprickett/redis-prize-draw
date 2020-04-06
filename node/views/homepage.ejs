@@ -48,7 +48,7 @@
           <p class="has-text-weight-bold"><%= winners[n].name %>: <%= winners[n].prize %></p>
         </article>
       </div>
-    <% if ((n % 4 === 0 && n > 0) || n === winners.length - 1) { %>
+    <% if (((n + 1) % 4 === 0) || n === winners.length - 1) { %>
     </div>
     <% } %>
     <% } %>
