@@ -91,6 +91,46 @@ const getGitHubProfile = async (gitHubId) => {
 // Get an array of prizes.
 const getPrizes = async () => redisClient.smembersAsync(getKeyName('prizes'));
 
+// Get the winner details with GitHub profile pictures
+// and names.
+const getWinners = async () => {
+  const winnersJsonKey = getKeyName('winners_json');
+  const winnersJson = await redisClient.getAsync(winnersJsonKey);
+
+  if (winnersJson) {
+    // Cache hit!
+    return JSON.parse(winnersJson);
+  }
+  
+  // Cache miss!
+  const winners = await redisClient.hgetallAsync(getKeyName('winners'));
+
+  if (! winners) {
+    return null;
+  }
+
+  const winnersArray = [];
+
+  for (const prize in winners) {
+    const winnerId = winners[prize];
+    const winnerProfile = await getGitHubProfile(winnerId);
+    const name = winnerProfile.name || winnerProfile.login;
+
+    winnersArray.push({
+      name,
+      prize,
+      image: winnerProfile.avatar_url
+    });
+  }
+
+  // Cache response to save doing this work over and over.
+  // No need to wait for this, if it fails, will try again next
+  // time someone asks for winners.
+  redisClient.set(winnersJsonKey, JSON.stringify(winnersArray));
+
+  return winnersArray;
+};
+
 // Exit if PRIZE_DRAW_PASSWORD is not set.
 if (! PRIZE_DRAW_PASSWORD) {
   console.error('PRIZE_DRAW_PASSWORD environment variable must be set!');
@@ -139,7 +179,7 @@ app.get('/', async (req, res) => {
   if (state === prizeDrawState.DRAW_OPEN_NO_ENTRANTS || state === prizeDrawState.DRAW_OPEN_WITH_ENTRANTS) {
     prizes = await getPrizes();
   } else if (state === prizeDrawState.DRAW_WON) {
-    winners = getWinners();
+    winners = await getWinners();
   }
 
   res.render('homepage', { state, prizes, winners });
@@ -198,7 +238,36 @@ app.post('/drawprizes', async (req, res) => {
     return res.status(403).send();
   }
 
-  // TODO
+  // Close the draw if it is still open.
+  redisClient.unlink(getKeyName('is_open'));
+
+  const prizeWinners = [];
+
+  while (true) {
+    const prize = await redisClient.spopAsync(getKeyName('prizes'));
+
+    if (! prize) {
+      // We have run out of prizes.
+      break;
+    }
+
+    const winner = await redisClient.spopAsync(getKeyName('entrants'));
+
+    if (! winner) {
+      // We have run out of entrants.
+      break;
+    }
+
+    prizeWinners.push(prize, winner);
+  }
+
+  // Store winners.
+  await redisClient.hmsetAsync(getKeyName('winners'), prizeWinners);
+
+  // Delete any remaining (non-winning) entrants.
+  redisClient.unlink(getKeyName('entrants'));
+
+  res.send('OK');
 });
 
 // Serve the admin login page.

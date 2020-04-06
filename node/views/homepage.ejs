@@ -36,20 +36,18 @@
   <p>Sorry, we're not running a draw at the moment, check back later!</p>
   <% } else if (state === 'DRAW_WON') { %>
   <h1 class="title">Winners</h1>
-    {% for row in winners | batch(4) %}
+    <% for (const winner of winners) { %> 
     <div class="columns">
-      {% for winner in row %}
       <div class="column is-3">
         <article class="box">
           <figure class="image">
-            <img src="{{ winner.image }}">
+            <img src="<%= winner.image %>">
           </figure>   
-          <p class="has-text-weight-bold">{{winner.name}}: {{ winner.prize }}</p>
+          <p class="has-text-weight-bold"><%= winner.name %>: <%= winner.prize %></p>
         </article>
       </div>
-      {% endfor %}
     </div>
-    {% endfor %}
+    <% } %>
   <% } else if (state === 'DRAW_CLOSED_WITH_ENTRANTS') { %>
   <p>The draw has closed and we are waiting for our winners to be announced!</p>
   <div class="level"></div>
