@@ -32,7 +32,7 @@ app.config['SECRET_KEY'] = secrets.token_urlsafe(16)
 redis = Redis(host = os.environ.get('REDIS_HOST', 'localhost'), port = os.environ.get('REDIS_PORT', 6379), password = os.environ.get('REDIS_PASSWORD', None), decode_responses = True)
 
 def get_key_name(*args):
-    return '{}:{}'.format(REDIS_KEY_PREFIX, ':'.join(args))
+    return f'{REDIS_KEY_PREFIX}:{":".join(args)}'
 
 def get_draw_state():
     pipeline = redis.pipeline()
@@ -49,17 +49,17 @@ def get_draw_state():
     prizes_exist = responses[2]
     num_entrants = responses[3]
 
-    if (draw_open == 0 and winners_exist == 0 and prizes_exist == 0):
+    if draw_open == 0 and winners_exist == 0 and prizes_exist == 0:
         return PrizeDrawState.NO_DRAW
 
-    if (draw_open == 1):
-        if (num_entrants == 0):
+    if draw_open == 1:
+        if num_entrants == 0:
             return PrizeDrawState.DRAW_OPEN_NO_ENTRANTS
 
         return PrizeDrawState.DRAW_OPEN_WITH_ENTRANTS
 
-    if (draw_open == 0 and winners_exist == 0):
-        if (num_entrants == 0):
+    if draw_open == 0 and winners_exist == 0:
+        if num_entrants == 0:
             return PrizeDrawState.DRAW_CLOSED_NO_ENTRANTS
 
         return PrizeDrawState.DRAW_CLOSED_WITH_ENTRANTS
@@ -69,13 +69,13 @@ def get_draw_state():
 def get_github_profile(github_id):
     profile = redis.get(get_key_name('profiles', github_id))
 
-    if (profile):
+    if profile:
         return json.loads(profile)
 
     # Cache miss on the profile, get it from origin at GitHub.
-    response = requests.get('https://api.github.com/users/{}'.format(github_id))
+    response = requests.get(f'https://api.github.com/users/{github_id}')
 
-    if (response.status_code == 200):
+    if response.status_code == 200:
         profile = response.json()
 
         # Cache this profile in Redis for an hour (3600 seconds).
@@ -92,21 +92,21 @@ def get_winners():
     # Check for cached winners JSON
     winners_json = redis.get(get_key_name('winners_json'))
 
-    if (winners_json):
+    if winners_json:
         # Cache hit!
         return json.loads(winners_json)
 
     # Cache miss :(
     winners = redis.hgetall(get_key_name('winners'))
 
-    if (winners):
+    if winners:
         winner_list = []
 
         for prize in winners:
             winner_id = winners[prize]
             winner_profile = get_github_profile(winner_id)
             
-            if (winner_profile['name']):
+            if winner_profile['name']:
                 winner_name = winner_profile['name']
             else:
                 winner_name = winner_profile['login']
@@ -136,10 +136,10 @@ def homepage():
     prizes = None
     winners = None
 
-    if (state == PrizeDrawState.DRAW_OPEN_NO_ENTRANTS or state == PrizeDrawState.DRAW_OPEN_WITH_ENTRANTS):
+    if state == PrizeDrawState.DRAW_OPEN_NO_ENTRANTS or state == PrizeDrawState.DRAW_OPEN_WITH_ENTRANTS:
         prizes = get_prizes()
     
-    if (state == PrizeDrawState.DRAW_WON):
+    if state == PrizeDrawState.DRAW_WON:
         winners = get_winners()
 
     return render_template('homepage.html', state = state.name, prizes = prizes, winners = winners)
@@ -154,14 +154,14 @@ def enter_prize_draw(github_id):
 
     profile = get_github_profile(lowercase_id)
 
-    if (not profile):
+    if not profile:
         # User doesn't exist in GitHub.
         abort(404)
 
     # Try entering this GitHub ID into the draw.
     member_added = redis.sadd(get_key_name('entrants'), lowercase_id)
 
-    if (member_added == 0):
+    if member_added == 0:
         # This GitHub ID has already entered the draw.
         abort(400)
 
@@ -170,7 +170,7 @@ def enter_prize_draw(github_id):
 
 @app.route('/startdraw', methods=['POST'])
 def start_new_draw():
-    if (not session.get('authenticated')):
+    if not session.get('authenticated'):
         abort(403)
 
     pipeline = redis.pipeline()
@@ -198,7 +198,7 @@ def start_new_draw():
 
 @app.route('/enddraw', methods=['POST'])
 def end_draw():
-    if (not session.get('authenticated')):
+    if not session.get('authenticated'):
         abort(403)
 
     redis.delete(get_key_name('is_open'))
@@ -218,7 +218,7 @@ def draw_prizes():
     while True:
         prize = redis.spop(get_key_name('prizes'), 1)
 
-        if (len(prize) == 0):
+        if len(prize) == 0:
             # We have run out of prizes.
             break
     
@@ -226,7 +226,7 @@ def draw_prizes():
 
         winner = redis.spop(get_key_name('entrants'), 1)
 
-        if (len(winner) == 0):
+        if len(winner) == 0:
             # We have run out of entrants.
             break
 
@@ -244,11 +244,11 @@ def draw_prizes():
 
 @app.route('/admin', methods=['GET', 'POST']) 
 def admin_page():
-    if (request.method == 'GET'):
+    if request.method == 'GET':
         session.clear()
         return render_template('adminlogin.html')
 
-    if (request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD')):
+    if request.form['password'] and request.form['password'] == os.environ.get('PRIZE_DRAW_PASSWORD'):
         session['authenticated'] = True
         state = get_draw_state()
 
