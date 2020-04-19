@@ -168,6 +168,7 @@ app.use(expressSession({
 app.use(expressBodyParser.urlencoded({ 
   extended: true 
 }));
+app.use(expressBodyParser.json());
 
 // Home page.
 app.get('/', async (req, res) => {
@@ -213,12 +214,34 @@ app.get('/enter/:gitHubId', async (req, res) => {
 });
 
 // Start the draw.
-app.post('/startdraw', (req, res) => {
+app.post('/startdraw', async (req, res) => {
   if (! req.session.authenticated) {
     return res.status(403).send();
   }
 
-  // TODO
+  const pipeline = redisClient.batch();
+
+  // Delete any previous draw data.  Uses del not unlink as 
+  // we are about to SADD members to 'prizes' again so want to 
+  // make sure the old 'prizes' was definitely deleted before 
+  // adding the new set of prizes to it...
+  pipeline.del(getKeyName('entrants'), getKeyName('winners'), getKeyName('winners_json'), getKeyName('prizes'));
+
+  // Add all the prizes to a set.
+  pipeline.sadd(getKeyName('prizes'), req.body.prizes);
+
+  // Mark the draw as open and set any duration.
+  const duration = parseInt(req.body.duration, 10);
+
+  pipeline.set(getKeyName('is_open'), 'true');
+
+  if (duration > 0) {
+    pipeline.expire(getKeyName('is_open'), duration);
+  }
+
+  await pipeline.execAsync();
+  
+  res.send('OK');
 });
 
 // Close the draw manually (rather than letting any time period expire).
@@ -229,7 +252,7 @@ app.post('/enddraw', async (req, res) => {
 
   await redisClient.delAsync(getKeyName('is_open'));
 
-  res.send('OK')
+  res.send('OK');
 });
 
 // Draw a winner for each prize.
