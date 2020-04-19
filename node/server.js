@@ -214,7 +214,7 @@ app.get('/enter/:gitHubId', async (req, res) => {
 });
 
 // Start the draw.
-app.post('/startdraw', (req, res) => {
+app.post('/startdraw', async (req, res) => {
   if (! req.session.authenticated) {
     return res.status(403).send();
   }
@@ -239,7 +239,7 @@ app.post('/startdraw', (req, res) => {
     pipeline.expire(getKeyName('is_open'), duration);
   }
 
-  pipeline.execAsync();
+  await pipeline.execAsync();
   
   res.send('OK');
 });
