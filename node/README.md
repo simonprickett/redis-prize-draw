@@ -24,7 +24,7 @@ $ export REDIS_PORT=6379
 $ export REDIS_PASSWORD=secret
 ```
 
-If your Redis instance doesn't use a password, omit `REDIS_PASSWORD`.
+If your Redis instance doesn't use a password, omit `REDIS_PASSWORD`.  The application won't delete any existing keys from your Redis database, and will prefix all keys it uses with `prizedraw:`
 
 ### Application Port
 
