@@ -5,7 +5,7 @@ An example application to run a simple online Prize Draw using Redis as the data
 * [Python](python/README.md) (Flask framework)
 * [Node.js](node/README.md) (Express framework, EJS templates)
 
-Both use Bulma for the front end, which is exactly the same for both implementations.  Watch a video presentation of this project (Python codebase) for Women Who Code San Diego on YouTube [here](https://www.youtube.com/watch?v=iRY_D21rxVg).
+Both use Bulma for the front end, which is exactly the same for both implementations.  Watch a video presentation of this project (Python codebase) for Women Who Code San Diego on YouTube [here](https://www.youtube.com/watch?v=iRY_D21rxVg).  I also wrote about this project [on my website](https://simonprickett.dev/building-a-redis-prize-draw-application/).
 
 ![screenshot](screenshots/draw_winners.png)
 
